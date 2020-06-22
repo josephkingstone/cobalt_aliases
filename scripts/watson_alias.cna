@@ -1,0 +1,19 @@
+beacon_command_register("watson", "Enumerate missing KBs and suggest exploits",
+	"Usage: watson\n\n" .
+	"Uses execute-assembly to run the assembly\n");
+alias watson{
+	local('$bid $asm $desc @args $argu');
+	$bid = $1;
+	$asm = "/opt/cobalt_strike_extension_kit/exe/Watson.exe";
+	$desc = "Watson";
+	@args = @_;
+	remove(@args, $bid);
+	$argu = join(' ', @args);
+	if ($argu eq ""){
+		blog2($bid, "" . dstamp(ticks()) . " Executing $desc");
+	}
+	else{
+		blog2($bid, "" . dstamp(ticks()) . " Executing $desc \'$argu\'");
+	}
+	bexecute_assembly!($bid, $asm, $argu);
+}
