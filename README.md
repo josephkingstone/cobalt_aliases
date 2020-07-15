@@ -5,11 +5,6 @@ Tired of typing execute-assembly everytime you use Cobalt Strike?  Clone this. L
 Looking for an all in one for a lot of current tradecraft?  Clone this. <br>
 
 I do not take credit for most of this work.  A lot of this work was influenced by Outflank, Specter Ops (0xThirteen) Mainly, and seeing other Aggressor Script Repositories.  The purpose of this was to aggregate Cobalt Strike supplements used during engagements. 
-
-## C # Tools
-https://github.com/GhostPack/Seatbelt<br> 
-https://github.com/eladshamir/Internal-Monologue<br>
-=======
 For OPSec, you may want to provide your own binaries.  The binaries provided may get flagged by A/V, but do work in lower maturity environments and Certification lab environments.
 <br>
 
@@ -35,7 +30,6 @@ Go to cobalt strike's script manager and load csek.cna
 <br>
 https://github.com/GhostPack/Seatbelt <br>
 https://github.com/eladshamir/Internal-Monologue <br>
->>>>>>> upstream/master
 https://github.com/djhohnstein/SharpWeb<br>
 https://github.com/BloodHoundAD/SharpHound<br>
 https://github.com/Kevin-Robertson/InveighZero<br>
@@ -64,8 +58,6 @@ https://github.com/outflanknl/Zipper<br>
 https://github.com/P1CKLES/SharpBox<br>
 https://github.com/rasta-mouse/Watson<br>
 https://github.com/slyd0g/SharpClipboard<br> 
-
-## Powershell Tools
 https://github.com/kfosaaen/Get-LAPSPasswords<br>
 
 ## These Tools are not C#, but need to be incorporated into toolset
