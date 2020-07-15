@@ -1,5 +1,9 @@
 # cobalt_strike_extension_kit
+<<<<<<< HEAD
 Tired of typing execute-assembly everytime you use Cobalt Strike?  Clone this. Looking for an all in one for a lot of current tradecraft?  Clone this. 
+=======
+Looking for an all in one for a lot of current tradecraft?  Clone this. <br>
+>>>>>>> upstream/master
 
 I do not take credit for most of this work.  A lot of this work was influenced by Outflank, Specter Ops (0xThirteen) Mainly, and seeing other Aggressor Script Repositories.  The purpose of this was to aggregate Cobalt Strike supplements used during engagements. 
 
@@ -9,9 +13,41 @@ cd /opt/
 git clone https://github.com/josephkingstone/cobaltstrike_extension_kit.git 
 ```
 
+<<<<<<< HEAD
 ## C # Tools
 https://github.com/GhostPack/Seatbelt<br> 
 https://github.com/eladshamir/Internal-Monologue<br>
+=======
+For OPSec, you may want to provide your own binaries.  The binaries provided may get flagged by A/V, but do work in lower maturity environments and Certification lab environments.
+<br>
+
+<br>
+
+06/25/2020 - Added more tradecraft and made Extension Kit more workflow driven.  Some items are mapped to Mitre - will expand on this in the future.
+<br>
+<br>
+To-Do
+<br>
+<br>
+Continue Expanding, try to implement more Offense In Depth e.g., multiple ways to do one thing.
+<br>
+<br>
+With Offense In Depth, add items that reflect low security maturity and items that reflect higher level maturity to gauge clients.  Also may be useful in purple team engagements when using various forms of tradecraft for example - kerberoast with powershell and kerberoast with rubeus
+<br>
+<br>
+Improve Mitre Mapping to items
+<br>
+<br>
+Usage <br>
+cd /opt/ <br>
+git clone https://github.com/josephkingstone/cobaltstrike_extension_kit.git <br>
+Go to cobalt strike's script manager and load csek.cna
+
+
+<br>
+https://github.com/GhostPack/Seatbelt <br>
+https://github.com/eladshamir/Internal-Monologue <br>
+>>>>>>> upstream/master
 https://github.com/djhohnstein/SharpWeb<br>
 https://github.com/BloodHoundAD/SharpHound<br>
 https://github.com/Kevin-Robertson/InveighZero<br>

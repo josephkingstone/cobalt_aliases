@@ -1,0 +1,153 @@
+#
+# Highlights new checking-in Beacons green and these exiting ones red for a defined time.
+#
+# Author:
+#   Mariusz B. / mgeeky, "20
+#   <mb [at] binary-offensive.com>
+#   (https://github.com/mgeeky)
+#
+
+global('%KNOWN_BEACONS $HIGHLIGHT_DURATION %HIGHLIGHTS');
+
+# Hightlight duration expressed in miliseconds
+$HIGHLIGHT_DURATION = 5000;
+
+%HIGHLIGHTS = %(
+    initial => "good",
+    exit => "bad",
+    exited => "ignore",
+    error => "neutral",
+    output => ""
+);
+
+# ---------------------------------------
+# Do not alter variables below this point
+
+%KNOWN_BEACONS = %();
+
+sub getBeaconEntry {
+    return @(bdata($1));
+}
+
+sub highlightBeacon {
+    local('@entry $bid $col $cur');
+    (@entry, $bid, $col) = @_;
+    $cur = binfo($bid, "_accent");
+
+    if($cur ne %HIGHLIGHTS[$col]) {
+        %KNOWN_BEACONS[$bid]["prev-accent"] = $cur;
+        highlight("beacons", @entry, %HIGHLIGHTS[$col]);
+    }
+}
+
+on beacon_initial {
+    local('@entry');
+
+    if($1 in keys(%KNOWN_BEACONS)) {
+        return;
+    }
+
+    %KNOWN_BEACONS[$1] = %();
+    %KNOWN_BEACONS[$1]["ticks"] = ticks();
+
+    @entry = getBeaconEntry($1);
+    if(@entry) {
+        %KNOWN_BEACONS[$1]["status"] = 'initial';
+        highlightBeacon(@entry, $1, "initial");
+    }
+}
+
+on beacon_output {
+    local('@entry');
+
+    if($1 !in keys(%KNOWN_BEACONS)) {
+        %KNOWN_BEACONS[$1] = %();
+    }
+
+    %KNOWN_BEACONS[$1]["ticks"] = ticks();
+
+    @entry = getBeaconEntry($1);
+    if(@entry && (%KNOWN_BEACONS[$1]["status"] eq "") && (%HIGHLIGHTS["output"] ne "")) {
+        highlightBeacon(@entry, $1, "output");
+    }
+}
+
+# doesn't work for some reason.
+on beacon_output_alt {
+    local('@entry');
+
+    if($1 !in keys(%KNOWN_BEACONS)) {
+        %KNOWN_BEACONS[$1] = %();
+    }
+
+    %KNOWN_BEACONS[$1]["ticks"] = ticks();
+
+    @entry = getBeaconEntry($1);
+    if(@entry && (%KNOWN_BEACONS[$1]["status"] eq "") && (%HIGHLIGHTS["output"] ne "")) {
+        highlightBeacon(@entry, $1, "output");
+    }
+}
+
+on beacon_error {
+    local('@entry');
+
+    if($1 !in keys(%KNOWN_BEACONS)) {
+        %KNOWN_BEACONS[$1] = %();
+    }
+
+    %KNOWN_BEACONS[$1]["ticks"] = ticks();
+
+    @entry = getBeaconEntry($1);
+    if(@entry && (%HIGHLIGHTS["error"] ne "")) {
+        %KNOWN_BEACONS[$1]["status"] = 'error';
+        highlightBeacon(@entry, $1, "error");
+    }
+}
+
+on beacon_input {
+    local('@entry');
+
+    if($1 !in keys(%KNOWN_BEACONS)) {
+        %KNOWN_BEACONS[$1] = %();
+    }
+
+    if ($3 eq "exit") {
+        %KNOWN_BEACONS[$1]["ticks"] = ticks();
+        @entry = getBeaconEntry($1);
+        if(@entry) {
+            %KNOWN_BEACONS[$1]["status"] = 'exiting';
+            highlightBeacon(@entry, $1, "exit");
+        }
+
+        remove(%KNOWN_BEACONS, %KNOWN_BEACONS[$1]);
+    }
+}
+
+on heartbeat_1s {
+    local('$diff $b @entry');
+
+    foreach $bid (keys(%KNOWN_BEACONS)) {
+        $b = %KNOWN_BEACONS[$bid];
+        if("ticks" in keys($b)) {
+            if(strlen($b["ticks"]) > 0) {
+                $diff = ticks() - $b["ticks"];
+                if($diff >= $HIGHLIGHT_DURATION) {
+                    @entry = getBeaconEntry($bid);
+                    if(@entry) {
+                        if(%KNOWN_BEACONS[$bid]["status"] eq "exiting") {
+                            %KNOWN_BEACONS[$1]["status"] = 'exited';
+                            highlightBeacon(@entry, $bid, "exited");
+                        }
+                        else {
+                            #%KNOWN_BEACONS[$bid]["prev-accent"] = binfo($1, "_accent");
+                            highlight("beacons", @entry, %KNOWN_BEACONS[$bid]["prev-accent"]);
+                            %KNOWN_BEACONS[$1]["status"] = "";
+                        }
+                    }
+
+                    %KNOWN_BEACONS[$bid]["ticks"] = "";
+                }
+            }
+        }
+    }
+}

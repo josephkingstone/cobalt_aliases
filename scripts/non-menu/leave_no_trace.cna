@@ -1,0 +1,362 @@
+#### LeaveNoTrace ####
+## Keep track of dropped files to clean up environment later. 
+## Author: Alyssa (ramen0x3f)
+## Last Updated: 2018-09-26
+
+## Usage: ## 
+# View > "Leave No Trace". Click column to sort. 
+#   (By default all items show as Status: ?. Click "Check for litter" to update.) 
+#
+# Right click items 
+# 	> "Search and Destroy" tries to remove items from the chosen beacon
+#	> "Check for litter" 
+#		- Does an LS to look for the dest_file from the chosen beacon
+#		- Updates left column of results with status (cleaned, NOT cleaned, ?)
+
+## Coming soon: ##
+# - Additional options to specify directories/paths (in cases dest_file was the filename only)
+# - Track bcp() calls in archives too instead of just bupload() 
+# - Add interesting filenames/directories to compromised_log.rpt for easier reporting to blue team
+
+## FAIR WARNING ##
+# If you select a dest_file that has only the filename (not a full path as well) this will fail. 
+# I'm sorry - it's not my fault. It's all I could pull from the archives/upload event.
+
+## CREDIT ##
+# This script uses the awesome visualization/tab code by @001SPARTaN (for @r3dqu1nn)
+# As seen on tv: https://github.com/harleyQu1nn/AggressorScripts/blob/master/logvis.cna
+
+#################################################################################
+## Imports ##
+#############
+import ui.*;
+import table.*;
+import java.awt.*;
+import javax.swing.*;
+import javax.swing.table.*;
+
+global('$model $console $table %looking @directories @filenames @targets');
+
+#################################################################################
+## Functions ##
+###############
+sub check_for_litter {
+	## Callback for "Check for litter" right click menu option
+	## Does an LS on each dest directory from the specified beacon id
+
+	#Set variables
+	local('$bid $host $dir $d $dir %files %details');
+	$bid = $3['bid'];
+
+	foreach $host => %files (%looking) { #Get each host we're looking for 
+		foreach $dir => %details (%files) { #Check each directory/item under the host
+			if ( %details['update'] ) { #See if we're looking for it right now 
+				$d = strrep(join("\\", sublist(split("\\\\", $dir), 0, -1)), ':', '$'); #Parse directory
+				println("Looking in $d on $host from $bid");
+				bls($bid, "\\\\" . $host . "\\" . $d, &search_callback);
+			}
+		}
+	}
+}
+
+sub create_vis {
+	## This is the fancy code from @001SPARTaN and @r3dqu1nn
+
+	this('$client');
+	local('$sorter $content');
+	# GenericTableModel from table.*
+	# Columns for each data model
+	
+	#####Taking our source_file for now 
+	#$model = [new GenericTableModel: @(beacon_pid", "beacon_ip", "beacon_user", "source_file", "dest_file"), "beacon", 16];
+	
+	$model = [new GenericTableModel: @("status", "beacon_id", "beacon_ip", "beacon_user", "dest_file"), "beacon", 16];
+
+	# Create a table from the GenericTableModel
+	$table = [new ATable: $model];
+
+	# Controls how the column headers will sort the table
+	$sorter = [new TableRowSorter: $model];
+	[$sorter toggleSortOrder: 3];
+
+	[$sorter setComparator: 0, {
+		return $1 cmp $2;
+	}];
+
+	[$sorter setComparator: 1, {
+		return $1 cmp $2;
+	}];
+
+	[$sorter setComparator: 2, {
+		return $1 cmp $2;
+	}];
+
+	[$sorter setComparator: 3, {
+		return $1 <=> $2;
+	}];
+
+	# Set $sorter as the row sorter for $table
+	[$table setRowSorter: $sorter];
+
+	# Create a split pane (divider you can drag around)
+	$content = [new JScrollPane: $table];
+
+	# Set popup menu for the table
+	setup_popup($table, "menu");
+
+	update_table();
+
+	# Register the visualization with CS
+	addVisualization("Leave No Trace", $content);
+	return $content;
+}
+
+sub destroy_callback {
+	## Callback for the LS from the "Search and Destroy" command
+	## Parses directory listing and removes designated files
+	## Note: I wrote this first so it's probably not the best it could be. 
+
+	local('$host $temp');
+	@results = split("\n", $3);
+	removeAt(@results, 0);
+	$host = split('\\\\', $2)[2]; 
+
+	if ( size(@results) ) {
+		foreach %r (@results) {
+			@x = split("\t", %r);
+			if ( @x[0] !ismatch 'D' && @x[-1] in @filenames ) { #Check if file matches interesting ones
+				$temp = $dir . "\\" . @x[-1];
+
+				blog($1, ">> FOUND: " . $2 . "\\" . @x[-1]);
+				println(">> REMOVING: " . $2 . "\\" . @x[-1]);
+				brm($1, $2 . "\\" . @x[-1]); #Destroy
+				
+				%looking[$host][$temp]['status'] = 'NOT cleaned'; #Update for the Leave No Trace tab
+				%looking[$host][$temp]['update'] = 0;
+				update_table();
+			}
+		}
+	}
+	return;
+}
+
+sub search_and_destroy {
+	## Callback for "Search and Destroy" right click menu option
+	## Does an LS on each dest directory from the specified beacon id and removes interesting files
+
+	$bid = $3['bid'];
+	foreach $d (@directories) { #Change to UNC path for bls()
+		$d = strrep($d, ':', '$');
+	}
+
+	foreach $tar (@targets) {
+		foreach $dir (@directories) {
+			blog($bid, "Searching \\\\" . $tar . "\\" . $dir);
+			bls($bid, "\\\\" . $tar . "\\" . $dir, &destroy_callback);
+		}
+	}
+}
+
+sub search_archives {
+	## Parses archives to pull out uploads for the Leave No Trace tab
+	## Returns all the items to add to the model 
+
+	local('$ip $dir $dest $status @uploads @bids %entry $parse $bid');
+	@uploads = @();
+	@bids = beacon_ids();
+
+	foreach %entry (data_query("archives")) {
+		#Pull out interesting archives
+		if( %entry['data'] ismatch 'upload .* as .*') { 
+			$parse = replace(%entry['data'], 'upload ', '');
+			($source, $dest) = split(' as ', $parse);
+			
+			$bid = %entry['bid'];
+			if ( $bid !in  @bids ) {
+				continue;
+			}
+
+            #Get IP and directory 
+            if ( $dest !hasmatch '^\\\\' ) {
+            	$ip = beacon_info($bid, "internal");
+            	$dir = $dest; 
+            }
+            #If UNC path in dest_file, parse out IP
+            else { 
+            	$ip = split('\\\\', $dest)[2]; 
+            	$dir = join('\\', sublist(split('\\\\', $dest), 3));
+            }
+
+           	#Set status if we've already checked its status 
+           	if ( $ip in %looking && $dir in %looking[$ip] ) {
+           			$status = %looking[$ip][$dir]['status'];
+           	}
+           	else {
+           			$status = "?";
+           	}
+
+           	#Add to array
+			add(@uploads, %(beacon_pid => beacon_info($bid, "pid"), source_file => $source, dest_file => $dest, beacon_user => beacon_info($bid, "user"), beacon_ip => $ip, beacon_id => $bid, status => $status));
+		}
+	}
+
+	return @uploads;
+}
+
+sub search_callback {
+	local('$host @results $dir %r @x $item %details');
+	@results = split("\n", $3);
+	removeAt(@results, 0);
+	$host = split('\\\\', $2)[2]; 
+	$dir = join('\\', sublist(split('\\\\', $2), 3));
+				
+	if ( size(@results) ) {
+		foreach %r (@results) {
+			@x = split("\t", %r);
+			if ( @x[0] !ismatch 'D' ) {
+				$temp = $dir . "\\" . @x[-1];
+				if ( $temp in %looking[$host] && %looking[$host][$temp]['update'] == 1 ) {
+					println("Found $temp on $host");
+					%looking[$host][$temp]['status'] = 'NOT cleaned';
+					%looking[$host][$temp]['update'] = 0;
+					update_table();
+					return;
+				}
+			} 
+		}
+		println("Didn't find anything");
+		foreach $item => %details (%looking[$host]) {
+			if ( %details['update'] && $dir isin $item ) {
+				println("Marking $item as cleaned on $host");
+				%details['status'] = 'cleaned';
+				%details['update'] = 0;
+			}
+		}
+	}
+	println("Updating table");
+	update_table();
+	return;
+}
+
+sub setup_popup {
+	# setup_popup provided by Raphael Mudge
+	# https://gist.github.com/rsmudge/87ce80cd8d8d185c5870d559af2dc0c2
+	# we're using fork({}) to run this in a separate Aggressor Script environment.
+	# This reduces deadlock potential due to Sleep's global interpreter lock
+	#
+	# this especially matters as our mouse listener will be fired for *everything*
+	# to include mouse movements.
+	fork({
+		[$component addMouseListener: lambda({
+			if ([$1 isPopupTrigger]) {
+				# If right click, show popup
+				show_popup($1, $name, $component);
+			}
+		}, \$component, \$name)];
+	}, $component => $1, $name => $2, $model => $model, $table => $table);
+}
+
+sub update_table {
+	## Updates the Leave No Trace tab
+	## As a note: when you fork() you have to pass all global 
+	## 	variables (see \$model and \%looking) or you'll go insane. 
+
+	fork({
+		local('%entry');
+
+		# Clear the model so we can put new stuff in it.
+		[$model clear: 1024];
+
+		foreach %entry (search_archives()) {
+        	# Add the new entry to $model
+        	[$model addEntry: %entry];
+		}
+		# Update with the new table
+		[$model fireListeners];
+	}, \$model, \%looking);
+}
+
+#################################################################################
+## Pop Ups ##
+#############
+popup menu {
+	item "Search and Destroy" {
+		local('$dir $dest $file $ip');
+
+		#Get ready
+		clear(@filenames);
+		clear(@targets);
+		clear(@directories);
+
+		#A little inner dialog
+		$dialog = dialog("Search and Destroy", %(bid => $null), &search_and_destroy);
+		dialog_description($dialog, "FAIR WARNING: if you select a dest_file that has only the filename (not a full path as well) this will fail. I'm sorry - it's not my fault. It's all I could pull from the archives/upload event.");
+		drow_beacon($dialog, "bid", "Beacon to search from: ");
+		dbutton_action($dialog, "Destroy");
+		dialog_show($dialog);
+
+		#Make a list
+		foreach $row ([$table getSelectedRows]) {
+            $dest = [$model getValueAt: $row, 4];
+            $file = split('\\\\', $dest)[-1];
+            add(@filenames, $file);
+
+            #Check it twice
+            if ( $dest !hasmatch '^\\\\' ) {
+            	add(@targets, [$model getValueAt: $row, 2]); #IP
+            	$dir = join('\\', sublist(split('\\\\', $dest), 0, -1));
+            	add(@directories, $dir);
+            }
+            else {
+            	add(@targets, split('\\\\', $dest)[2]); #IP
+            	$dir = join('\\', sublist(split('\\\\', $dest), 3, -1));
+            	add(@directories, $dir);
+            }
+		}
+	}
+
+	item "Check for litter" {
+		local('$dir $dest $ip $host $row $dialog %folders');
+		foreach $host => %folders (%looking) {
+			foreach $dir => %details (%folders) {
+				%details['update'] = 0;
+			}
+		}
+
+		#Make a list
+		foreach $row ([$table getSelectedRows]) {
+            $dest = [$model getValueAt: $row, 4];
+            
+            #Check it twice
+            if ( $dest !hasmatch '^\\\\' ) {
+            	$ip = [$model getValueAt: $row, 2];
+            	$dir = $dest;
+            }
+            else {
+            	$ip = split('\\\\', $dest)[2]; 
+            	$dir = join('\\', sublist(split('\\\\', $dest), 3));
+            }
+
+			if ( $ip in %looking && $dir in %looking[$ip] ) {
+	        	%looking[$ip][$dir]['update'] = 1;
+        	}
+        	else {
+        		%looking[$ip][$dir] = %(status => '?', update => 1);
+        	}
+		}
+
+		#A little inner dialog
+		$dialog = dialog("Check for litter", %(bid => $null), &check_for_litter);
+		dialog_description($dialog, "FAIR WARNING: if you select a dest_file that has only the filename (not a full path as well) this will fail. I'm sorry - it's not my fault. It's all I could pull from the archives/upload event.");
+		drow_beacon($dialog, "bid", "Beacon to search from: ");
+		dbutton_action($dialog, "Check");
+		dialog_show($dialog);
+	}
+}
+
+popup view {
+	item "Leave No Trace" {
+		# Show the visualization
+		addTab("Leave No Trace", create_vis(), "All uploaded/dropped files");
+	}
+}

