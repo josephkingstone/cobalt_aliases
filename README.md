@@ -1,19 +1,11 @@
 # cobalt_strike_extension_kit
-<<<<<<< HEAD
+
 Tired of typing execute-assembly everytime you use Cobalt Strike?  Clone this. Looking for an all in one for a lot of current tradecraft?  Clone this. 
 =======
 Looking for an all in one for a lot of current tradecraft?  Clone this. <br>
->>>>>>> upstream/master
 
 I do not take credit for most of this work.  A lot of this work was influenced by Outflank, Specter Ops (0xThirteen) Mainly, and seeing other Aggressor Script Repositories.  The purpose of this was to aggregate Cobalt Strike supplements used during engagements. 
 
-## Usage 
-```
-cd /opt/ 
-git clone https://github.com/josephkingstone/cobaltstrike_extension_kit.git 
-```
-
-<<<<<<< HEAD
 ## C # Tools
 https://github.com/GhostPack/Seatbelt<br> 
 https://github.com/eladshamir/Internal-Monologue<br>
@@ -38,11 +30,7 @@ With Offense In Depth, add items that reflect low security maturity and items th
 Improve Mitre Mapping to items
 <br>
 <br>
-Usage <br>
-cd /opt/ <br>
-git clone https://github.com/josephkingstone/cobaltstrike_extension_kit.git <br>
 Go to cobalt strike's script manager and load csek.cna
-
 
 <br>
 https://github.com/GhostPack/Seatbelt <br>
