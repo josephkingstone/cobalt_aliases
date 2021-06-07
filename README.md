@@ -48,6 +48,7 @@ EDRQuery.exe
 https://github.com/PwnDexter/SharpEDRChecker
 
 EvtMuteHook.dll
+https://github.com/bats3c/EvtMute
 
 ExcelDCOM.cs
 
@@ -106,6 +107,7 @@ POPTHATSHELLBOI.exe
 ProcessInjection.exe
 
 PurpleSharp.exe
+https://github.com/mvelazc0/PurpleSharp
 
 RDPHIJACK.exe
 
@@ -165,22 +167,30 @@ Sharp-SMBExec.exe
 SharpAllowedToAct.exe
 
 SharpAppLocker.exe
+https://github.com/Flangvik/SharpAppLocker
 
 SharpBlock.exe
+https://github.com/CCob/SharpBlock
 
 SharpBypassUAC.exe
+https://github.com/FatRodzianko/SharpBypassUAC
 
 SharpCOM.exe
 
 SharpChisel.exe
+https://github.com/shantanu561993/SharpChisel
 
 SharpChrome.exe
+https://github.com/djhohnstein/SharpWeb/blob/master/Chrome/SharpChrome.cs
 
 SharpChromium.exe
+https://github.com/djhohnstein/SharpChromium
 
 SharpClipboard.exe
+https://github.com/slyd0g/SharpClipboard
 
 SharpCloud.exe
+https://github.com/chrismaddalena/SharpCloud
 
 SharpCookieMonster.exe
 
@@ -189,16 +199,21 @@ SharpCrashEventLog.exe
 SharpDPAPI.exe
 
 SharpDir.exe
+https://github.com/jnqpblc/SharpDir
 
 SharpDomainSpray.exe
+https://github.com/HunnicCyber/SharpDomainSpray
 
 SharpDoor.exe
+https://github.com/infosecn1nja/SharpDoor
 
 SharpDump.exe
+https://github.com/GhostPack/SharpDump
 
 SharpEDRChecker.exe
 
 SharpEvtMute.exe
+https://github.com/bats3c/EvtMute
 
 SharpExcel4-DCOM.exe
 
