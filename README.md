@@ -112,18 +112,25 @@ RDPHIJACK.exe
 RdpThief.dll
 
 Recon-AD-AllLocalGroups.dll
+https://github.com/outflanknl/Recon-AD
 
 Recon-AD-Computers.dll
+https://github.com/outflanknl/Recon-AD
 
 Recon-AD-Domain.dll
+https://github.com/outflanknl/Recon-AD
 
 Recon-AD-Groups.dll
+https://github.com/outflanknl/Recon-AD
 
 Recon-AD-LocalGroups.dll
+https://github.com/outflanknl/Recon-AD
 
 Recon-AD-SPNs.dll
+https://github.com/outflanknl/Recon-AD
 
 Recon-AD-Users.dll
+https://github.com/outflanknl/Recon-AD
 
 RegistryStrikesBack.exe
 
@@ -132,20 +139,26 @@ RemoteInject.exe
 RemoteInject64.exe
 
 Rubeus.exe
+https://github.com/GhostPack/Rubeus
 
 SCShell.exe
+https://github.com/Mr-Un1k0d3r/SCShell
 
 SafetyKatz.exe
+https://github.com/GhostPack/SafetyKatz
 
 SauronEye.exe
+https://github.com/vivami/SauronEye
 
 SearchOutlook.exe
 
 SearchSessions.exe
 
 Seatbelt.exe
+https://github.com/GhostPack/Seatbelt
 
 SharPersist.exe
+https://github.com/fireeye/SharPersist
 
 Sharp-SMBExec.exe
 
