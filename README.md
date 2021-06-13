@@ -103,6 +103,7 @@ Outflank-PsX.dll
 https://github.com/outflanknl/Ps-Tools
 
 POPTHATSHELLBOI.exe
+https://github.com/jfmaes/TrustJack
 
 ProcessInjection.exe
 
@@ -112,6 +113,7 @@ https://github.com/mvelazc0/PurpleSharp
 RDPHIJACK.exe
 
 RdpThief.dll
+https://github.com/0x09AL/RdpThief
 
 Recon-AD-AllLocalGroups.dll
 https://github.com/outflanknl/Recon-AD
