@@ -155,8 +155,10 @@ SauronEye.exe
 https://github.com/vivami/SauronEye
 
 SearchOutlook.exe
+https://github.com/RedLectroid/SearchOutlook
 
 SearchSessions.exe
+https://github.com/matterpreter/OffensiveCSharp/blob/master/SessionSearcher/Program.cs
 
 Seatbelt.exe
 https://github.com/GhostPack/Seatbelt
@@ -165,8 +167,10 @@ SharPersist.exe
 https://github.com/fireeye/SharPersist
 
 Sharp-SMBExec.exe
+https://github.com/checkymander/Sharp-SMBExec
 
 SharpAllowedToAct.exe
+https://github.com/pkb1s/SharpAllowedToAct
 
 SharpAppLocker.exe
 https://github.com/Flangvik/SharpAppLocker
@@ -178,6 +182,7 @@ SharpBypassUAC.exe
 https://github.com/FatRodzianko/SharpBypassUAC
 
 SharpCOM.exe
+https://github.com/rvrsh3ll/SharpCOM
 
 SharpChisel.exe
 https://github.com/shantanu561993/SharpChisel
@@ -195,10 +200,13 @@ SharpCloud.exe
 https://github.com/chrismaddalena/SharpCloud
 
 SharpCookieMonster.exe
+https://github.com/m0rv4i/SharpCookieMonster
 
 SharpCrashEventLog.exe
+https://github.com/slyd0g/SharpCrashEventLog
 
 SharpDPAPI.exe
+https://github.com/GhostPack/SharpDPAPI
 
 SharpDir.exe
 https://github.com/jnqpblc/SharpDir
@@ -220,38 +228,54 @@ https://github.com/bats3c/EvtMute
 SharpExcel4-DCOM.exe
 
 SharpExec.exe
+https://github.com/anthemtotheego/SharpExec
 
 SharpFruit.exe
+https://github.com/rvrsh3ll/SharpFruit
 
 SharpGPOAbuse.exe
+https://github.com/FSecureLABS/SharpGPOAbuse
 
 SharpHose.exe
+https://github.com/ustayready/SharpHose
 
 SharpHound.exe
+https://github.com/BloodHoundAD/SharpHound
 
-SharpHound.ps1
+SharpHound.ps1 - Can delete
 
 SharpKatz.exe
+https://github.com/b4rtik/SharpKatz
 
 SharpML.exe
+https://github.com/HunnicCyber/SharpML
 
 SharpMapExec.exe
+https://github.com/cube0x0/SharpMapExec
 
 SharpMiniDump.exe
+https://github.com/b4rtik/SharpMiniDump
 
 SharpMove.exe
+https://github.com/0xthirteen/SharpMove
 
 SharpPrinter.exe
+https://github.com/rvrsh3ll/SharpPrinter
 
 SharpRDP.exe
+https://github.com/0xthirteen/SharpRDP
 
 SharpReg.exe
+https://github.com/jnqpblc/SharpReg
 
 SharpSecDump.exe
+https://github.com/G0ldenGunSec/SharpSecDump
 
 SharpShares.exe
+https://github.com/djhohnstein/SharpShares
 
 SharpSniper.exe
+https://github.com/HunnicCyber/SharpSniper
 
 SharpSpray.exe
 https://github.com/jnqpblc/SharpSpray
@@ -278,6 +302,7 @@ Shhmon.exe
 https://github.com/matterpreter/Shhmon
 
 SilentClean.exe
+https://github.com/EncodeGroup/UAC-SilentClean
 
 SitRep.exe
 https://github.com/mdsecactivebreach/sitrep
@@ -306,6 +331,7 @@ StickyNotesExtract.exe
 https://github.com/V1V1/SharpScribbles
 
 SweetPotato.exe
+https://github.com/CCob/SweetPotato
 
 ThunderFox.exe
 https://github.com/V1V1/SharpScribbles
@@ -323,6 +349,7 @@ WMIUtility.exe
 https://github.com/Mr-Un1k0d3r/RedTeamCSharpScripts/blob/master/README.md
 
 WSuspicious.exe
+https://github.com/GoSecure/WSuspicious
 
 Watson.exe
 https://github.com/rasta-mouse/Watson
