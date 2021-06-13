@@ -283,12 +283,16 @@ SitRep.exe
 https://github.com/mdsecactivebreach/sitrep
 
 Snaffler.exe
+https://github.com/SnaffCon/Snaffler
 
 SpoolSample.exe
+https://github.com/leechristensen/SpoolSample
 
 SpoolTrigger.x64.dll
+https://github.com/nccgroup/nccfsas/tree/main/Tools/spoolsystem
 
 SpoolTrigger.x86.dll
+https://github.com/nccgroup/nccfsas/tree/main/Tools/spoolsystem
 
 Spray-AD.dll
 https://github.com/outflanknl/Spray-AD
@@ -296,6 +300,7 @@ https://github.com/outflanknl/Spray-AD
 SqlClient.exe
 
 StandIn.exe
+https://github.com/FuzzySecurity/StandIn
 
 StickyNotesExtract.exe
 https://github.com/V1V1/SharpScribbles
@@ -307,7 +312,6 @@ https://github.com/V1V1/SharpScribbles
 
 TruffleSnout.exe
 https://github.com/dsnezhkov/TruffleSnout
-
 
 UnqoutedPath.exe
 https://github.com/matterpreter/OffensiveCSharp/tree/master/UnquotedPath
