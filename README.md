@@ -51,8 +51,10 @@ EvtMuteHook.dll
 https://github.com/bats3c/EvtMute
 
 ExcelDCOM.cs
+https://github.com/0xthirteen/MoveKit/blob/master/Assemblies/ExcelDCOM.cs
 
 FileWrite.cs
+https://github.com/0xthirteen/MoveKit/blob/master/Assemblies/FileWrite.cs
 
 
 Grouper2.exe
