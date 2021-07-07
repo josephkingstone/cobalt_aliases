@@ -114,6 +114,7 @@ PurpleSharp.exe
 https://github.com/mvelazc0/PurpleSharp
 
 RDPHIJACK.exe
+https://github.com/bohops/SharpRDPHijack
 
 RdpThief.dll
 https://github.com/0x09AL/RdpThief
