@@ -26,6 +26,7 @@ CleanRunMRU.exe
 https://github.com/0xthirteen/CleanRunMRU
 
 Clippy-B.exe
+https://github.com/jfmaes/Clippi-B
 
 CredPhisher.exe
 https://github.com/matterpreter/OffensiveCSharp/tree/master/CredPhisher
