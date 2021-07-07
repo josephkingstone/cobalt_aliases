@@ -443,9 +443,12 @@ winPEASany.exe
 https://github.com/carlospolop/privilege-escalation-awesome-scripts-suite/tree/master/winPEAS
 
 winrm.exe
+https://github.com/mez-0/CSharpWinRM
 
 wmic.xsl
+https://github.com/0xthirteen/MoveKit/tree/master/Templates
 
 wscript.vbs
+https://github.com/0xthirteen/MoveKit/tree/master/Templates
 
 Need to add
