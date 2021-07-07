@@ -226,6 +226,7 @@ SharpDump.exe
 https://github.com/GhostPack/SharpDump
 
 SharpEDRChecker.exe
+https://github.com/PwnDexter/SharpEDRChecker
 
 SharpEvtMute.exe
 https://github.com/bats3c/EvtMute
@@ -424,7 +425,7 @@ regsvr32.sct
 https://github.com/0xthirteen/MoveKit/tree/master/Templates
 
 scout.exe
-
+https://github.com/jaredhaight/scout
 
 service-custom-nonpre.cs
 https://github.com/0xthirteen/MoveKit/tree/master/Templates
