@@ -364,26 +364,37 @@ WindfarmDynamite.exe
 https://github.com/FuzzySecurity/Sharp-Suite/tree/master/WindfarmDynamite
 
 WindowsFormsApp9.exe
+https://github.com/matterpreter/OffensiveCSharp/tree/master/CredPhisher
 
 blocketw.bin
+https://github.com/Soledge/BlockEtw
 
 blocketw.exe
+https://github.com/Soledge/BlockEtw
 
 custom-nonpre.cs
+https://github.com/0xthirteen/MoveKit/blob/master/Templates/custom-nonpre.cs
 
 dazzleUP_Reflective_DLL.dll
+https://github.com/hlldz/dazzleUP
 
 dcom_lat_movement.o
+https://github.com/yaxser/cobaltstrike-bof
 
 dllmain.def
+https://github.com/EncodeGroup/UAC-SilentClean
 
 dllmain_template.c
+https://github.com/EncodeGroup/UAC-SilentClean
 
 esc.exe
+https://github.com/NetSPI/ESC
 
 getversion.x64.o
+https://github.com/sk3w/beacon-object-files
 
 getversion.x86.o
+https://github.com/sk3w/beacon-object-files
 
 goddi.exe
 https://github.com/NetSPI/goddi
