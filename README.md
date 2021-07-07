@@ -140,6 +140,7 @@ Recon-AD-Users.dll
 https://github.com/outflanknl/Recon-AD
 
 RegistryStrikesBack.exe
+https://github.com/mdsecactivebreach/RegistryStrikesBack
 
 RemoteInject.exe
 
