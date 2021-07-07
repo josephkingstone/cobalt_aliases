@@ -231,6 +231,7 @@ SharpEvtMute.exe
 https://github.com/bats3c/EvtMute
 
 SharpExcel4-DCOM.exe
+https://github.com/rvrsh3ll/SharpExcel4-DCOM
 
 SharpExec.exe
 https://github.com/anthemtotheego/SharpExec
@@ -327,7 +328,7 @@ https://github.com/nccgroup/nccfsas/tree/main/Tools/spoolsystem
 Spray-AD.dll
 https://github.com/outflanknl/Spray-AD
 
-SqlClient.exe
+SqlClient.exe - need to remove
 
 StandIn.exe
 https://github.com/FuzzySecurity/StandIn
@@ -394,22 +395,28 @@ inject_urbanbishop.x86.o
 https://github.com/sk3w/beacon-object-files
 
 installutil.cs
+https://github.com/0xthirteen/MoveKit/tree/master/Templates
 
 ldaputility.exe
 https://github.com/Mr-Un1k0d3r/RedTeamCSharpScripts/blob/master/README.md
 
 msbuild.csproj
+https://github.com/0xthirteen/MoveKit/tree/master/Templates
 
 mshta.hta
+https://github.com/0xthirteen/MoveKit/tree/master/Templates
 
 pickl3_reflective_dll_x64.dll
 https://github.com/hlldz/pickl3
 
 regsvr32.sct
+https://github.com/0xthirteen/MoveKit/tree/master/Templates
 
 scout.exe
 
+
 service-custom-nonpre.cs
+https://github.com/0xthirteen/MoveKit/tree/master/Templates
 
 sharpfiles.exe
 https://github.com/fullmetalcache/SharpFiles
